@@ -15,7 +15,7 @@ namespace core
 
     private:
         graphics::Window m_window;
-        void changeBackgroundColor();
+        void animateBackgroundColor(float &red, int &factor);
         void processInput(GLFWwindow* window);
     };
 

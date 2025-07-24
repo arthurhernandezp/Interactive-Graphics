@@ -6,6 +6,7 @@ namespace core {
 
     int Application::run()
     {
+        std::cout << "glfw version: " << glfwGetVersionString() << '\n';
         // glfw: initialize and configure
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -16,12 +17,17 @@ namespace core {
             glfwTerminate();
             return -1;
         }
-
+        float red = 0.0f;
+        int factor = 1;
         // render loop
-        while (!m_window.shouldClose()) {
+        while (!m_window.shouldClose())
+        {
             processInput(m_window.getGLFWwindow());
 
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            animateBackgroundColor(red, factor);
+
+            // render
+            glClearColor(red, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             m_window.swapBuffers();
@@ -32,9 +38,10 @@ namespace core {
         return 0;
     }
 
-    void Application::changeBackgroundColor()
+    void Application::animateBackgroundColor(float &red, int &factor)
     {
-        std::cout << "Change background color functionality is not implemented yet." << std::endl;
+            red += 0.005f * factor;
+            if (red > 1.0f || red < 0.0f) factor = factor * -1;
     }
 
     void Application::processInput(GLFWwindow *window)
