@@ -1,10 +1,10 @@
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-# file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.cpp)
+file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.cpp)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-# target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
 
 # External dependencies includes
 target_include_directories(${PROJECT_NAME} PRIVATE
