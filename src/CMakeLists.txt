@@ -10,10 +10,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${GLAD_ROOT_DIR}/include
     ${GLFW_ROOT_DIR}/include
+    ${GLM_ROOT_DIR}/include
 )
 
 # External dependencies libs
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glad
     glfw
+    glm
 )
