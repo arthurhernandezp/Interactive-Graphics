@@ -32,7 +32,7 @@ namespace core {
         "}\0";
 
         const char* fragmentShaderSource = "#version 330 core\n"
-        "out vec4 color;\n"
+        "layout(location=0) out vec4 color;\n"
         "void main()\n"
         "{\n"
         "   color = vec4(0.0f, 1.0f, 1.0f, 1.0f);\n"
