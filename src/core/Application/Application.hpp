@@ -7,16 +7,19 @@
 
 namespace core
 {
-    class Application {
-    public:
-        Application();
+    class Application 
+    {
+        public:
+            Application();
 
-        int run();
+            int run();
 
-    private:
-        graphics::Window m_window;
-        void animateBackgroundColor(float &red, int &factor);
-        void processInput(GLFWwindow* window);
+        private:
+            void animateBackgroundColor(float &red, int &factor);
+            void processInput(GLFWwindow* window);
+
+        private:
+            graphics::Window _window;
     };
 
 } // namespace core
