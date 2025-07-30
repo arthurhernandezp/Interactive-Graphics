@@ -1,4 +1,7 @@
 #include "Application.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
+#include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 
 namespace core {
 
@@ -32,8 +35,9 @@ namespace core {
         "out vec4 color;\n"
         "void main()\n"
         "{\n"
-        "   color = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n"
+        "   color = vec4(0.0f, 1.0f, 1.0f, 1.0f);\n"
         "}\n\0";
+
         GLuint program = glCreateProgram();
         //Compilando o vertex shader
         GLuint vs = glCreateShader(GL_VERTEX_SHADER);
@@ -69,19 +73,15 @@ namespace core {
 
 
         // Defina a matriz identidade (4x4)
-        float mvp[16] = {
-            1,0,0,0,
-            0,1,0,0,
-            0,0,1,0,
-            0,0,0,1
-        };
+        glm::mat4 mvp = glm::mat4(1.0f);
+
         glUseProgram(program);
-        
+
         // Envie a matriz MVP para o shader
         std::cout << "Enviando a matriz MVP para o shader" << std::endl;        
         GLint mvpLoc = glGetUniformLocation(program, "mvp");
         if (mvpLoc != -1) {
-            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, mvp);
+            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
         } else {
             std::cerr << "Uniform 'mvp' não encontrado!" << std::endl;
         }
@@ -91,12 +91,12 @@ namespace core {
 
         float positions[] =
         {
-            -0.8f,0.4f,0.0f,
             0.8f,0.4f,0.0f,
             0.8f,-0.4f,0.0f,
             -0.8f,0.4f,0.0f,
-            0.8f,-0.4f,0.0f,
-            -0.8f,-0.4f,0.0f
+            -0.8f,-0.4f,0.0f,
+            0.3f,0.2f,0.0f,
+            -0.3f,-0.2f,0.0f
         };
 
         //Criar o VAO
@@ -124,7 +124,7 @@ namespace core {
             GL_FALSE,0,(void*)0
         );
         std::cout << "Enviando os dados do VBO para o Vertex Shader" << '\n';
-
+        auto num_points = sizeof(positions)/sizeof(float)/3;
         // render loop
         while (!_window.shouldClose())
         {
@@ -137,7 +137,7 @@ namespace core {
             glClear(GL_COLOR_BUFFER_BIT);
             glPointSize(10.0f);
             glDrawArrays(GL_POINTS,
-            0,6);
+            0,num_points);
             _window.swapBuffers();
             _window.pollEvents();
         }
