@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 #include "graphics/renderer/Shader.hpp"
+#include "graphics/renderer/VertexBuffer.hpp"
 namespace core 
 {
     Application::Application(): _window(800, 600, "LearnOpenGL") {}
@@ -69,7 +70,7 @@ namespace core
         }
 
         //Criando dados
-
+        
         float positions[] =
         {
             0.8f,0.4f,0.0f,
@@ -87,24 +88,14 @@ namespace core
         std::cout << "Criando VAO" << '\n';
 
         //Colocar os dados no buffer(VBO)
-        GLuint vbo;
-        glGenBuffers(1,&vbo);
-        glBindBuffer(GL_ARRAY_BUFFER,vbo);
-        glBufferData(GL_ARRAY_BUFFER,
-                    sizeof(positions),
-                    positions,
-                    GL_STATIC_DRAW);
-        std::cout << "Criando VBO e colocando os dados de positions no buffer" << '\n';
-
-        //Enviar os dados para o vertex shader
+        graphics::renderer::VertexBufferObject vbo;
+        vbo.bindBuffer();
+        //Receber dados de positions
+        vbo.receiveData(positions,sizeof(positions),GL_STATIC_DRAW);
         GLuint pos = glGetAttribLocation(program,"pos");
-        std::cout << "Encontrou o pos" << std::endl;
-        glEnableVertexAttribArray(pos);
-        glVertexAttribPointer(
-            pos,3,GL_FLOAT,
-            GL_FALSE,0,(void*)0
-        );
-        std::cout << "Enviando os dados do VBO para o Vertex Shader" << '\n';
+        //Enviar os dados para o vertex shader
+        vbo.sendData(pos,3,GL_FLOAT);
+ 
         auto num_points = sizeof(positions)/sizeof(float)/3;
         // render loop
         while (!_window.shouldClose())
