@@ -2,9 +2,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
-
-namespace core {
-
+#include "graphics/renderer/Shader.hpp"
+namespace core 
+{
     Application::Application(): _window(800, 600, "LearnOpenGL") {}
 
     int Application::run()
@@ -16,61 +16,41 @@ namespace core {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        if (!_window.create()) {
+        if (!_window.create()) 
+        {
             glfwTerminate();
             return -1;
         }
+        
         float red = 0.0f;
         int factor = 1;
 
-        const char* vertexShaderSource = "#version 330 core\n"
-        "layout (location = 0) in vec3 pos;\n"
-        "uniform mat4 mvp;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = mvp* vec4(pos, 1);\n"
-        "}\0";
-
-        const char* fragmentShaderSource = "#version 330 core\n"
-        "layout(location=0) out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(0.0f, 1.0f, 1.0f, 1.0f);\n"
-        "}\n\0";
-
         GLuint program = glCreateProgram();
+        
         //Compilando o vertex shader
-        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-
-        glShaderSource(vs,1,&vertexShaderSource,NULL);
-        glCompileShader(vs);
-        GLint success;
-        glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            GLchar InfoLog[1024];
-            glGetShaderInfoLog(vs, sizeof(InfoLog), NULL, InfoLog);
-            fprintf(stderr, "Error compiling shader type %d: '%s'\n", GL_VERTEX_SHADER, InfoLog);
+        try
+        {
+            graphics::renderer::Shader vertex_shader("shaders/shader.vert",GL_VERTEX_SHADER);
+            glAttachShader(program,vertex_shader.getShaderId());
         }
-        std::cout << "Compilando Vertex Shader" << std::endl;
-        glAttachShader(program,vs);
-
-        //Compilando o fragment shader
-        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs,1,&fragmentShaderSource,NULL);
-        glCompileShader(fs);
-        glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            GLchar InfoLog[1024];
-            glGetShaderInfoLog(fs, sizeof(InfoLog), NULL, InfoLog);
-            fprintf(stderr, "Error compiling shader type %d: '%s'\n", GL_FRAGMENT_SHADER, InfoLog);
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
         }
-        std::cout << "Compilando Fragment Shader" << std::endl;
 
-        glAttachShader(program,fs);
-
+        //Compilando o fragment shader        
+        try
+        {
+            graphics::renderer::Shader fragment_shader("shaders/shader.frag",GL_FRAGMENT_SHADER);
+            glAttachShader(program,fragment_shader.getShaderId());
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+       
         //Linkando os shaders com o program
         glLinkProgram(program);
-
 
         // Defina a matriz identidade (4x4)
         glm::mat4 mvp = glm::mat4(1.0f);
@@ -80,13 +60,14 @@ namespace core {
         // Envie a matriz MVP para o shader
         std::cout << "Enviando a matriz MVP para o shader" << std::endl;        
         GLint mvpLoc = glGetUniformLocation(program, "mvp");
-        if (mvpLoc != -1) {
+        if (mvpLoc != -1) 
+        {
             glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
-        } else {
+        } else
+        {
             std::cerr << "Uniform 'mvp' não encontrado!" << std::endl;
         }
 
-        std::cout << "Linkando os shaders com o program" << std::endl;
         //Criando dados
 
         float positions[] =
