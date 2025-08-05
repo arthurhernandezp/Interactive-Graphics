@@ -11,8 +11,10 @@ namespace graphics
                 VertexBufferObject();
                 ~VertexBufferObject();
                 void receiveData(const float* data, size_t count, GLenum dataUsage);
+                // @todo change sendData name function to tell how OpenGL will interpreter the data 
                 void sendData(GLuint attribute,GLint numberOfElements,GLenum dataType) const;
                 void bindBuffer() const;
+
             private:
                 void generateBuffer();
             private:

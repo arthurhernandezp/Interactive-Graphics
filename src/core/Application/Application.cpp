@@ -6,7 +6,9 @@
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
 
-#include <memory>       //unique_ptr
+#include <memory>       // unique_ptr
+#include <fstream>      // read obj file
+
 namespace core
 {
     //Constructor
@@ -39,18 +41,7 @@ namespace core
         program.sendUniformMat4("mvp",mvp);
         program.sendUniformFloat("intensity",0.5f);
         program.sendUniformFloat("transparency",0.2f);
-        //Criando dados
-
-        float positions[] =
-        {
-            0.8f,0.4f,0.0f,
-            0.8f,-0.4f,0.0f,
-            -0.8f,0.4f,0.0f,
-            -0.8f,-0.4f,0.0f,
-            -0.3f,-0.2f,0.0f,
-            0.0f,-0.8f,0.0f
-        };
-
+        
         //Criar o VAO
         GLuint vao;
         glGenVertexArrays(1,&vao);
@@ -61,7 +52,8 @@ namespace core
         graphics::renderer::VertexBufferObject vbo;
         vbo.bindBuffer();
         //Receber dados de positions
-        vbo.receiveData(positions,sizeof(positions),GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER,_positions.size() * sizeof(GLfloat), &_positions[0],GL_STATIC_DRAW);
+        // vbo.receiveData(positionsF,sizeof(positionsF),GL_STATIC_DRAW);
         GLuint pos = program.getAttribLocation("pos");
         //Enviar os dados para o vertex shader
         vbo.sendData(pos,3,GL_FLOAT);
@@ -83,16 +75,16 @@ namespace core
         GLuint clrLocation = program.getAttribLocation("clr");
         vbo2.sendData(clrLocation,3,GL_FLOAT);
 
-        auto num_points = sizeof(positions)/sizeof(float)/3;
-
+        auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
         float intensity = 1.0f;
         int factor = 1;
-
         // render loop
         while (!_window.shouldClose())
         {
+            glBindVertexArray(vao);
+
             float currentFrameStartTime = static_cast<float>(glfwGetTime());
             float deltaTime = currentFrameStartTime - lastFrameStartTime;
             lastFrameStartTime = currentFrameStartTime;
@@ -103,6 +95,9 @@ namespace core
             intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
+            // mvp = glm::translate(glm::mat4(1.0f), glm::vec3(red, 0.0f, 0.0f));
+            mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime*10), glm::vec3(1.0f, 1.0f, 1.0f));
+            program.sendUniformMat4("mvp", mvp);
             // render
             glClearColor(red, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -119,13 +114,18 @@ namespace core
 
     void Application::animateBackgroundColor(float &red, int &factor, float deltaTime)
     {
-            red += (0.08f * deltaTime) * factor;
-            if (red > 1.0f || red < 0.0f) factor = factor * -1;
+        red += (0.08f * deltaTime) * factor;
+        if (red > 1.0f || red < 0.0f) factor = factor * -1;
     }
 
     void Application::processInput(GLFWwindow *window)
     {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
+    }
+
+    bool Application::loadObjFile(const char *objFilePath) const
+    {
+        return false;
     }
 } // namespace core
