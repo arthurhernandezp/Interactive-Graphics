@@ -4,8 +4,12 @@
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 #include "graphics/renderer/Shader.hpp"
 #include "graphics/renderer/VertexBuffer.hpp"
-namespace core 
+#include "graphics/renderer/ShaderProgram.hpp"
+
+#include <memory>       //unique_ptr
+namespace core
 {
+    //Constructor
     Application::Application(): _window(800, 600, "LearnOpenGL") {}
 
     int Application::run()
@@ -17,68 +21,34 @@ namespace core
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        if (!_window.create()) 
+        if (!_window.create())
         {
             glfwTerminate();
             return -1;
         }
-        
-        float red = 0.0f;
-        int factor = 1;
 
-        GLuint program = glCreateProgram();
-        
-        //Compilando o vertex shader
-        try
-        {
-            graphics::renderer::Shader vertex_shader("shaders/shader.vert",GL_VERTEX_SHADER);
-            glAttachShader(program,vertex_shader.getShaderId());
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
 
-        //Compilando o fragment shader        
-        try
-        {
-            graphics::renderer::Shader fragment_shader("shaders/shader.frag",GL_FRAGMENT_SHADER);
-            glAttachShader(program,fragment_shader.getShaderId());
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-       
-        //Linkando os shaders com o program
-        glLinkProgram(program);
+        program.use();
 
         // Defina a matriz identidade (4x4)
         glm::mat4 mvp = glm::mat4(1.0f);
-
-        glUseProgram(program);
-
         // Envie a matriz MVP para o shader
-        std::cout << "Enviando a matriz MVP para o shader" << std::endl;        
-        GLint mvpLoc = glGetUniformLocation(program, "mvp");
-        if (mvpLoc != -1) 
-        {
-            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
-        } else
-        {
-            std::cerr << "Uniform 'mvp' não encontrado!" << std::endl;
-        }
 
+        std::cout << "Enviando a matriz MVP para o shader" << std::endl;
+        program.sendUniformMat4("mvp",mvp);
+        program.sendUniformFloat("intensity",0.5f);
+        program.sendUniformFloat("transparency",0.2f);
         //Criando dados
-        
+
         float positions[] =
         {
             0.8f,0.4f,0.0f,
             0.8f,-0.4f,0.0f,
             -0.8f,0.4f,0.0f,
             -0.8f,-0.4f,0.0f,
-            0.3f,0.2f,0.0f,
-            -0.3f,-0.2f,0.0f
+            -0.3f,-0.2f,0.0f,
+            0.0f,-0.8f,0.0f
         };
 
         //Criar o VAO
@@ -92,23 +62,52 @@ namespace core
         vbo.bindBuffer();
         //Receber dados de positions
         vbo.receiveData(positions,sizeof(positions),GL_STATIC_DRAW);
-        GLuint pos = glGetAttribLocation(program,"pos");
+        GLuint pos = program.getAttribLocation("pos");
         //Enviar os dados para o vertex shader
         vbo.sendData(pos,3,GL_FLOAT);
- 
+
+        float colors[] =
+        {
+            1.0f,0.0f,0.0f,
+            0.0f,1.0f,0.0f,
+            0.0f,0.0f,1.0f,
+            0.0f,1.0f,1.0f,
+            1.0f,0.0f,1.0f,
+            1.0f,1.0f,0.0f
+        };
+
+        graphics::renderer::VertexBufferObject vbo2;
+        vbo2.bindBuffer();
+        vbo2.receiveData(colors,sizeof(colors),GL_STATIC_READ);
+
+        GLuint clrLocation = program.getAttribLocation("clr");
+        vbo2.sendData(clrLocation,3,GL_FLOAT);
+
         auto num_points = sizeof(positions)/sizeof(float)/3;
+
+        float lastFrameStartTime = 0.0f;
+        float red= 0.0f;
+        float intensity = 1.0f;
+        int factor = 1;
+
         // render loop
         while (!_window.shouldClose())
         {
+            float currentFrameStartTime = static_cast<float>(glfwGetTime());
+            float deltaTime = currentFrameStartTime - lastFrameStartTime;
+            lastFrameStartTime = currentFrameStartTime;
+
             processInput(_window.getGLFWwindow());
 
-            animateBackgroundColor(red, factor);
-
+            animateBackgroundColor(red, factor, deltaTime);
+            intensity -= (0.08f * deltaTime) * factor;
+            program.sendUniformFloat("intensity",intensity);
+            program.sendUniformFloat("transparency",intensity);
             // render
             glClearColor(red, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             glPointSize(10.0f);
-            glDrawArrays(GL_POINTS,
+            glDrawArrays(GL_TRIANGLES,
             0,num_points);
             _window.swapBuffers();
             _window.pollEvents();
@@ -118,9 +117,9 @@ namespace core
         return 0;
     }
 
-    void Application::animateBackgroundColor(float &red, int &factor)
+    void Application::animateBackgroundColor(float &red, int &factor, float deltaTime)
     {
-            red += 0.00008f * factor;
+            red += (0.08f * deltaTime) * factor;
             if (red > 1.0f || red < 0.0f) factor = factor * -1;
     }
 

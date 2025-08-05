@@ -3,3 +3,4 @@ out/
 .vscode/
 .VSCodeCounter/
 CMakePresents.json
+CMakePresets.json

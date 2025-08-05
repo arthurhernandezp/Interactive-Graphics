@@ -7,7 +7,7 @@
 
 namespace core
 {
-    class Application 
+    class Application
     {
         public:
             Application();
@@ -15,7 +15,7 @@ namespace core
             int run();
 
         private:
-            void animateBackgroundColor(float &red, int &factor);
+            void animateBackgroundColor(float &red, int &factor, float deltaTime);
             void processInput(GLFWwindow* window);
 
         private:
