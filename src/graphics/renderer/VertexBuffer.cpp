@@ -8,9 +8,10 @@ namespace graphics
         {
             generateBuffer();
         }
-        
+
         VertexBufferObject::~VertexBufferObject()
         {
+            glDeleteBuffers(1,&_vbo);
         }
 
         void VertexBufferObject::sendData(GLuint attributeLocation,GLint numberOfElements,GLenum dataType) const
@@ -44,6 +45,5 @@ namespace graphics
 
         }
     } // namespace renderer
-    
-} // namespace graphics
 
+} // namespace graphics
