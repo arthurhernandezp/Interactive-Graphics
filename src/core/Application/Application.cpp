@@ -4,11 +4,13 @@
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 #include "graphics/renderer/Shader.hpp"
 #include "graphics/renderer/VertexBuffer.hpp"
+#include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
-
+#include <array>
 #include <memory>       // unique_ptr
 #include <fstream>      // read obj file
-
+#include <iostream>
+#include <string>
 namespace core
 {
     //Constructor
@@ -29,36 +31,42 @@ namespace core
             return -1;
         }
 
+        // auto loadFileResults = loadObjFile("resources/teapot.obj");
+        // if(!loadFileResults)
+        // {
+        //     std::cout << "FAILED to load file" << '\n';
+        // }
+        // else{
+        //     std::cout << "_positions.size()" << _positions.size() << '\n';
+        //     // _positions = loadFileResults.value();
+        //     std::cout << "_positions.size()" << _positions.size() << '\n';
+
+        // }
+        // [[maybe_unused]] std::array<float,9723> testando;
+        // for(int i = 0; auto & v : _positions)
+        // {
+        //     testando.at(i++) = v;
+        // }
         graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
 
         program.use();
 
-        // Defina a matriz identidade (4x4)
-        glm::mat4 mvp = glm::mat4(1.0f);
-        // Envie a matriz MVP para o shader
 
-        std::cout << "Enviando a matriz MVP para o shader" << std::endl;
-        program.sendUniformMat4("mvp",mvp);
-        program.sendUniformFloat("intensity",0.5f);
-        program.sendUniformFloat("transparency",0.2f);
-        
         //Criar o VAO
-        GLuint vao;
-        glGenVertexArrays(1,&vao);
-        glBindVertexArray(vao);
+        graphics::renderer::VertexArrayObject vao;
+        vao.bindBuffer();
         std::cout << "Criando VAO" << '\n';
 
         //Colocar os dados no buffer(VBO)
         graphics::renderer::VertexBufferObject vbo;
         vbo.bindBuffer();
         //Receber dados de positions
-        glBufferData(GL_ARRAY_BUFFER,_positions.size() * sizeof(GLfloat), &_positions[0],GL_STATIC_DRAW);
-        // vbo.receiveData(positionsF,sizeof(positionsF),GL_STATIC_DRAW);
+        vbo.receiveData(_positions,GL_STATIC_DRAW);
         GLuint pos = program.getAttribLocation("pos");
-        //Enviar os dados para o vertex shader
-        vbo.sendData(pos,3,GL_FLOAT);
+        //Como o opengl irá interpretar esses dados
+        vao.LinkVBO(vbo,pos);
 
-        float colors[] =
+        std::vector<float> colors =
         {
             1.0f,0.0f,0.0f,
             0.0f,1.0f,0.0f,
@@ -70,10 +78,19 @@ namespace core
 
         graphics::renderer::VertexBufferObject vbo2;
         vbo2.bindBuffer();
-        vbo2.receiveData(colors,sizeof(colors),GL_STATIC_READ);
+        vbo2.receiveData(colors,GL_STATIC_READ);
 
         GLuint clrLocation = program.getAttribLocation("clr");
-        vbo2.sendData(clrLocation,3,GL_FLOAT);
+        vao.LinkVBO(vbo2,clrLocation);
+
+        // Defina a matriz identidade (4x4)
+        glm::mat4 mvp = glm::mat4(1.0f);
+        // Envie a matriz MVP para o shader
+
+        std::cout << "Enviando a matriz MVP para o shader" << std::endl;
+        program.sendUniformMat4("mvp",mvp);
+        program.sendUniformFloat("intensity",0.5f);
+        program.sendUniformFloat("transparency",0.2f);
 
         auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
@@ -81,9 +98,11 @@ namespace core
         float intensity = 1.0f;
         int factor = 1;
         // render loop
+
         while (!_window.shouldClose())
         {
-            glBindVertexArray(vao);
+            program.use();
+            vao.bindBuffer();
 
             float currentFrameStartTime = static_cast<float>(glfwGetTime());
             float deltaTime = currentFrameStartTime - lastFrameStartTime;
@@ -124,8 +143,42 @@ namespace core
             glfwSetWindowShouldClose(window, true);
     }
 
-    bool Application::loadObjFile(const char *objFilePath) const
+    std::optional<std::vector<float>> Application::loadObjFile(const char *objFilePath) const
     {
-        return false;
+        std::vector<float> vertices;
+
+        //Loads OBJ file from path
+        std::ifstream file;
+        file.open(objFilePath);
+        if (!file.good())
+        {
+            std::cout << "Can't open obj file " << objFilePath << std::endl;
+            return std::nullopt;
+        }
+        else{
+            std::cout << "Abriuuu";
+        }
+
+        std::string line;
+        while (std::getline(file, line))
+        {
+            std::string text;
+
+            file >> text;
+            if (text == "v")
+            {
+                float value;
+                file >> value;
+                vertices.emplace_back(value);
+
+                file >> value;
+                vertices.emplace_back(value);
+
+                file >> value;
+                vertices.emplace_back(value);
+
+            }
+        }
+        return vertices;
     }
 } // namespace core
