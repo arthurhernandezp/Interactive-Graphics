@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
+#include <optional>
 #include "graphics/window/WindowFramework.hpp"
 
 namespace core
