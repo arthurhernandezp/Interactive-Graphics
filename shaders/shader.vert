@@ -6,6 +6,7 @@ out vec3 vColor;
 uniform mat4 mvp;
 void main()
 {
-    gl_Position = mvp* vec4(pos, 1);
-    vColor = clr;
+    gl_Position = mvp * vec4(pos * 0.05, 1);
+
+    vColor = vec3(0.0f,1.0f,1.0f);
 };
