@@ -1,11 +1,13 @@
 #include "VertexArray.hpp"
-
+#include <iostream>
 namespace graphics
 {
     namespace renderer
     {
         VertexArrayObject::VertexArrayObject()
         {
+            std::cout << "Criando VAO" << '\n';
+
             glGenVertexArrays(1, &_ID);
         }
 

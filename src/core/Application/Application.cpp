@@ -6,6 +6,7 @@
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
+#include "graphics/renderer/ElementBuffer.hpp"
 #include <array>
 #include <memory>       // unique_ptr
 #include <fstream>      // read obj file
@@ -14,7 +15,7 @@
 namespace core
 {
     //Constructor
-    Application::Application(): _window(800, 600, "LearnOpenGL") {}
+    Application::Application(): _window(1200, 600, "LearnOpenGL") {}
 
     int Application::run()
     {
@@ -31,73 +32,52 @@ namespace core
             return -1;
         }
 
-        // auto loadFileResults = loadObjFile("resources/teapot.obj");
-        // if(!loadFileResults)
-        // {
-        //     std::cout << "FAILED to load file" << '\n';
-        // }
-        // else{
-        //     std::cout << "_positions.size()" << _positions.size() << '\n';
-        //     // _positions = loadFileResults.value();
-        //     std::cout << "_positions.size()" << _positions.size() << '\n';
-
-        // }
-        // [[maybe_unused]] std::array<float,9723> testando;
-        // for(int i = 0; auto & v : _positions)
-        // {
-        //     testando.at(i++) = v;
-        // }
         graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
 
-        program.use();
-
+        auto loadFileResults = loadObjFile("resources/teapot.obj");
+        if(!loadFileResults)
+        {
+            std::cout << "FAILED to load file" << '\n';
+        }
+        else{
+            _positions = loadFileResults.value();
+        }
 
         //Criar o VAO
         graphics::renderer::VertexArrayObject vao;
         vao.bindBuffer();
-        std::cout << "Criando VAO" << '\n';
 
         //Colocar os dados no buffer(VBO)
         graphics::renderer::VertexBufferObject vbo;
-        vbo.bindBuffer();
-        //Receber dados de positions
+
         vbo.receiveData(_positions,GL_STATIC_DRAW);
+
         GLuint pos = program.getAttribLocation("pos");
-        //Como o opengl irá interpretar esses dados
         vao.LinkVBO(vbo,pos);
 
-        std::vector<float> colors =
-        {
-            1.0f,0.0f,0.0f,
-            0.0f,1.0f,0.0f,
-            0.0f,0.0f,1.0f,
-            0.0f,1.0f,1.0f,
-            1.0f,0.0f,1.0f,
-            1.0f,1.0f,0.0f
-        };
-
-        graphics::renderer::VertexBufferObject vbo2;
-        vbo2.bindBuffer();
-        vbo2.receiveData(colors,GL_STATIC_READ);
-
-        GLuint clrLocation = program.getAttribLocation("clr");
-        vao.LinkVBO(vbo2,clrLocation);
+        // Unbind all to prevent accidentally modifying them
+        vao.unbindBuffer();
+        vbo.unbindBuffer();
 
         // Defina a matriz identidade (4x4)
         glm::mat4 mvp = glm::mat4(1.0f);
         // Envie a matriz MVP para o shader
-
+        // mvp = projection * view * model;
         std::cout << "Enviando a matriz MVP para o shader" << std::endl;
+        mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
         program.sendUniformMat4("mvp",mvp);
         program.sendUniformFloat("intensity",0.5f);
         program.sendUniformFloat("transparency",0.2f);
 
-        auto num_points = _positions.size();
+        [[maybe_unused]]auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
         float intensity = 1.0f;
         int factor = 1;
         // render loop
+        std::cout << "Num points: " << num_points << '\n';
+        // glEnable(GL_DEPTH_TEST);
 
         while (!_window.shouldClose())
         {
@@ -114,15 +94,18 @@ namespace core
             intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
-            // mvp = glm::translate(glm::mat4(1.0f), glm::vec3(red, 0.0f, 0.0f));
-            mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime*10), glm::vec3(1.0f, 1.0f, 1.0f));
+            // mvp = glm::translate(glm::mat4(1.0f), glm::vec3(red, 0.0f, 0.0f ));
+            mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime*20), glm::vec3(1.0f, 0.0f, 0.0f));
             program.sendUniformMat4("mvp", mvp);
+
             // render
             glClearColor(red, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
-            glPointSize(10.0f);
-            glDrawArrays(GL_TRIANGLES,
+
+            glPointSize(1.5f);
+            glDrawArrays(GL_POINTS,
             0,num_points);
+
             _window.swapBuffers();
             _window.pollEvents();
         }

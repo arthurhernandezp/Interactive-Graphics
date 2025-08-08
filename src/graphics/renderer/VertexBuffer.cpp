@@ -36,7 +36,7 @@ namespace graphics
                     data.data(),
                     dataUsage);
             std::cout << "Criando VBO e colocando os dados de positions no buffer" << '\n';
-
+            unbindBuffer();
         }
     } // namespace renderer
 
