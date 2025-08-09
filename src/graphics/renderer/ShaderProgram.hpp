@@ -28,11 +28,12 @@ namespace graphics
                 void sendUniformFloat(const char * uniformVariable, float vData);
             private:
                 void attachShaders() const;
-                void linkShaders() const;
+                void linkShaders();
             private:
                 GLuint _program;
                 std::unique_ptr<Shader> _vs;
                 std::unique_ptr<Shader> _fs;
+                GLchar _infoLog[512];
         };
     } // namespace renderer
 } // namespace graphics

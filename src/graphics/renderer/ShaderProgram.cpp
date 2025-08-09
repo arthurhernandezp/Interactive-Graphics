@@ -78,9 +78,16 @@ namespace graphics
             glAttachShader(_program,_fs->getShaderId());
         }
 
-        void ShaderProgram::linkShaders() const
+        void ShaderProgram::linkShaders()
         {
             glLinkProgram(_program);
+            GLint success;
+            glGetProgramiv(_program, GL_LINK_STATUS, &success);
+            if (!success)
+            {
+                glGetProgramInfoLog(_program, 512, NULL, _infoLog);
+                std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << _infoLog << std::endl;
+            }
         }
 
     } // namespace renderer
