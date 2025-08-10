@@ -15,9 +15,6 @@ namespace core
 
             int run();
         private:
-            void animateBackgroundColor(float &red, int &factor, float deltaTime);
-            void processInput(GLFWwindow* window);
-
             std::optional<std::vector<float>> loadObjFile(const char * objFilePath) const;
         private:
             graphics::Window _window;

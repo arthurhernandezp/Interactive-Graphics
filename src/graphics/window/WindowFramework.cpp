@@ -51,4 +51,15 @@ namespace graphics
         return glfwWindowShouldClose(_window);
     }
 
+    void Window::animateBackgroundColor(float &red, int &factor, float deltaTime)
+    {
+        red += (0.08f * deltaTime) * factor;
+        if (red > 1.0f || red < 0.0f) factor = factor * -1;
+    }
+
+    void Window::processInput()
+    {
+        if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(_window, true);
+    }
 }// namespace graphics

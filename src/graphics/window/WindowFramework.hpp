@@ -14,7 +14,8 @@ public:
     void swapBuffers();
     void pollEvents();
     bool shouldClose() const;
-
+    void animateBackgroundColor(float &red, int &factor, float deltaTime);
+    void processInput();
     GLFWwindow* getGLFWwindow() const;
 
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

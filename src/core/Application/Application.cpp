@@ -88,10 +88,10 @@ namespace core
             float deltaTime = currentFrameStartTime - lastFrameStartTime;
             lastFrameStartTime = currentFrameStartTime;
 
-            processInput(_window.getGLFWwindow());
-
-            animateBackgroundColor(red, factor, deltaTime);
+            _window.processInput();
+            _window.animateBackgroundColor(red, factor, deltaTime);
             intensity -= (0.08f * deltaTime) * factor;
+
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
             // mvp = glm::translate(glm::mat4(1.0f), glm::vec3(red, 0.0f, 0.0f ));
@@ -112,18 +112,6 @@ namespace core
 
         glfwTerminate();
         return 0;
-    }
-
-    void Application::animateBackgroundColor(float &red, int &factor, float deltaTime)
-    {
-        red += (0.08f * deltaTime) * factor;
-        if (red > 1.0f || red < 0.0f) factor = factor * -1;
-    }
-
-    void Application::processInput(GLFWwindow *window)
-    {
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
     }
 
     std::optional<std::vector<float>> Application::loadObjFile(const char *objFilePath) const
