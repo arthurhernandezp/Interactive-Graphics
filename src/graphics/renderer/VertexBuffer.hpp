@@ -10,7 +10,7 @@ namespace graphics
             public:
                 VertexBufferObject();
                 ~VertexBufferObject();
-                void receiveData(std::vector<float> data, GLenum dataUsage);
+                void receiveData(std::vector<float> &data, GLenum dataUsage);
 
                 void bindBuffer() const;
                 void unbindBuffer() const;

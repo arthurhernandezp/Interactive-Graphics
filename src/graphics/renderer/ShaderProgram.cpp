@@ -52,7 +52,7 @@ namespace graphics
             return glGetAttribLocation(_program,vertexAttribute);
         }
 
-        void ShaderProgram::sendUniformMat4(const char *uniformVariable,glm::mat4 matrix)
+        void ShaderProgram::sendUniformMat4(const char *uniformVariable,glm::mat4 &matrix)
         {
             GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
             if (uniformVarLoc != -1){
@@ -62,7 +62,7 @@ namespace graphics
             }
         }
 
-        void ShaderProgram::sendUniformFloat(const char *uniformVariable, float vData)
+        void ShaderProgram::sendUniformFloat(const char *uniformVariable, float &vData)
         {
             GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
             if (uniformVarLoc != -1){

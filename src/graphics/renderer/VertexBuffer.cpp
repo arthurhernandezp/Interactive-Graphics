@@ -28,7 +28,7 @@ namespace graphics
         {
             glGenBuffers(1,&_vbo);
         }
-        void VertexBufferObject::receiveData(std::vector<float> data, GLenum dataUsage)
+        void VertexBufferObject::receiveData(std::vector<float> &data, GLenum dataUsage)
         {
             bindBuffer();
             glBufferData(GL_ARRAY_BUFFER,

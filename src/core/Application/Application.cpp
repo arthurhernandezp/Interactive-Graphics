@@ -34,14 +34,7 @@ namespace core
 
         graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
 
-        auto loadFileResults = loadObjFile("resources/teapot.obj");
-        if(!loadFileResults)
-        {
-            std::cout << "FAILED to load file" << '\n';
-        }
-        else{
-            _positions = loadFileResults.value();
-        }
+        loadObjFile(_positions,"resources/teapot.obj");
 
         //Criar o VAO
         graphics::renderer::VertexArrayObject vao;
@@ -61,24 +54,20 @@ namespace core
 
         // Defina a matriz identidade (4x4)
         glm::mat4 mvp = glm::mat4(1.0f);
-        // Envie a matriz MVP para o shader
-        // mvp = projection * view * model;
-        std::cout << "Enviando a matriz MVP para o shader" << std::endl;
         mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        float intensity = 1.0f;
+        float transparency = 0.5f;
 
         program.sendUniformMat4("mvp",mvp);
-        program.sendUniformFloat("intensity",0.5f);
-        program.sendUniformFloat("transparency",0.2f);
+        program.sendUniformFloat("intensity",intensity);
+        program.sendUniformFloat("transparency",transparency);
 
         [[maybe_unused]]auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
-        float intensity = 1.0f;
         int factor = 1;
-        // render loop
-        std::cout << "Num points: " << num_points << '\n';
-        // glEnable(GL_DEPTH_TEST);
 
+        // render loop
         while (!_window.shouldClose())
         {
             program.use();
@@ -114,21 +103,18 @@ namespace core
         return 0;
     }
 
-    std::optional<std::vector<float>> Application::loadObjFile(const char *objFilePath) const
+    void Application::loadObjFile(std::vector<float> &vertices,const char *objFilePath) const
     {
-        std::vector<float> vertices;
-
         //Loads OBJ file from path
         std::ifstream file;
         file.open(objFilePath);
         if (!file.good())
         {
             std::cout << "Can't open obj file " << objFilePath << std::endl;
-            return std::nullopt;
+            return;
         }
-        else{
-            std::cout << "Abriuuu";
-        }
+        
+        vertices.clear();
 
         std::string line;
         while (std::getline(file, line))
@@ -150,6 +136,5 @@ namespace core
 
             }
         }
-        return vertices;
     }
 } // namespace core

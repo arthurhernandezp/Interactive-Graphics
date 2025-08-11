@@ -24,8 +24,8 @@ namespace graphics
                 void use();
                 GLint getUniformVarPosition(const char * uniformVariable);
                 GLuint getAttribLocation(const char * vertexAttribute) const;
-                void sendUniformMat4(const char * uniformVariable, glm::mat4 matrix);
-                void sendUniformFloat(const char * uniformVariable, float vData);
+                void sendUniformMat4(const char * uniformVariable, glm::mat4 &matrix);
+                void sendUniformFloat(const char * uniformVariable, float &vData);
             private:
                 void attachShaders() const;
                 void linkShaders();

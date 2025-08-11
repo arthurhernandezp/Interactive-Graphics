@@ -15,10 +15,11 @@ namespace core
 
             int run();
         private:
-            std::optional<std::vector<float>> loadObjFile(const char * objFilePath) const;
+            void loadObjFile(std::vector<float> &vertices, const char * objFilePath) const;
         private:
             graphics::Window _window;
 
+            //Default positions to debug
             std::vector<float> _positions={
                 0.0f,0.0f,0.0f,
                 1.0f,0.0f,0.0f,
