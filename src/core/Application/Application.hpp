@@ -16,6 +16,7 @@ namespace core
             int run();
         private:
             void loadObjFile(std::vector<float> &vertices, const char * objFilePath) const;
+            float calculateDeltaTime(float &lastFrameStartTime);
         private:
             graphics::Window _window;
 

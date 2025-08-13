@@ -41,6 +41,16 @@ namespace graphics
         glViewport(0, 0, width, height);
     }
 
+    float Window::getAspectRatio() const
+    {
+        return _width/_height;
+    }
+
+    std::pair<unsigned int, unsigned int> Window::getWindowDimensions() const
+    {
+        return std::make_pair(_width,_height);
+    }
+
     GLFWwindow* Window::getGLFWwindow() const
     {
         return _window;

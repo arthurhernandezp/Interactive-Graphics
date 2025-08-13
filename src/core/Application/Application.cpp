@@ -12,6 +12,7 @@
 #include <fstream>      // read obj file
 #include <iostream>
 #include <string>
+
 namespace core
 {
     //Constructor
@@ -51,52 +52,59 @@ namespace core
         // Unbind all to prevent accidentally modifying them
         vao.unbindBuffer();
         vbo.unbindBuffer();
-
-        // Defina a matriz identidade (4x4)
-        glm::mat4 mvp = glm::mat4(1.0f);
-        mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+  
         float intensity = 1.0f;
         float transparency = 0.5f;
-
-        program.sendUniformMat4("mvp",mvp);
-        program.sendUniformFloat("intensity",intensity);
-        program.sendUniformFloat("transparency",transparency);
 
         [[maybe_unused]]auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
         int factor = 1;
 
+        // program.sendUniformMat4("mvp",mvp);
+        program.sendUniformFloat("intensity",intensity);
+        program.sendUniformFloat("transparency",transparency);
+        float rotation = 0.0f;
+        double prevTime = glfwGetTime();
+        std::cout << "Numero de vertices: " << _positions.size() << std:: endl;
         // render loop
         while (!_window.shouldClose())
         {
-            program.use();
-            vao.bindBuffer();
-
-            float currentFrameStartTime = static_cast<float>(glfwGetTime());
-            float deltaTime = currentFrameStartTime - lastFrameStartTime;
-            lastFrameStartTime = currentFrameStartTime;
-
-            _window.processInput();
-            _window.animateBackgroundColor(red, factor, deltaTime);
-            intensity -= (0.08f * deltaTime) * factor;
-
-            program.sendUniformFloat("intensity",intensity);
-            program.sendUniformFloat("transparency",intensity);
-            // mvp = glm::translate(glm::mat4(1.0f), glm::vec3(red, 0.0f, 0.0f ));
-            mvp *= glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime*20), glm::vec3(1.0f, 0.0f, 0.0f));
-            program.sendUniformMat4("mvp", mvp);
-
             // render
             glClearColor(red, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+            program.use();
+            vao.bindBuffer();
+
+            auto deltaTime = calculateDeltaTime(lastFrameStartTime);
+            _window.animateBackgroundColor(red, factor, deltaTime);
+            double crntTime = glfwGetTime();
+            if (crntTime - prevTime >= 1/60)
+            {
+                rotation += 0.5f;
+            }
+            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 view = glm::mat4(1.0f);
+            glm::mat4 proj = glm::mat4(1.0f);
+
+            model = glm::rotate(model,glm::radians(rotation),glm::vec3(0.0f,1.0f,0.0f));
+            view = glm::translate(view,glm::vec3(-10.0f,10.0f,10.0f));
+            proj = glm::perspective(glm::radians(45.0f),_window.getAspectRatio(), 0.1f,100.f);
+
+            program.sendUniformMat4("model",model);
+            program.sendUniformMat4("view",view);
+            program.sendUniformMat4("proj",proj);
+
+            intensity -= (0.08f * deltaTime) * factor;
+            program.sendUniformFloat("intensity",intensity);
+            program.sendUniformFloat("transparency",intensity);
 
             glPointSize(1.5f);
-            glDrawArrays(GL_POINTS,
-            0,num_points);
+            glDrawArrays(GL_POINTS, 0,num_points);
 
             _window.swapBuffers();
             _window.pollEvents();
+            _window.processInput();
         }
 
         glfwTerminate();
@@ -136,5 +144,13 @@ namespace core
 
             }
         }
+    }
+
+    float Application::calculateDeltaTime(float &lastFrameStartTime)
+    {
+            float currentFrameStartTime = static_cast<float>(glfwGetTime());
+            float deltaTime = currentFrameStartTime - lastFrameStartTime;
+            lastFrameStartTime = currentFrameStartTime;
+            return deltaTime;
     }
 } // namespace core
