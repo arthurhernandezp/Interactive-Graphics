@@ -2,11 +2,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
+
 #include "graphics/renderer/Shader.hpp"
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
 #include "graphics/renderer/ElementBuffer.hpp"
+#include "core/Camera.hpp"
+
 #include <array>
 #include <memory>       // unique_ptr
 #include <fstream>      // read obj file
@@ -33,19 +36,23 @@ namespace core
             return -1;
         }
 
+        // Carrega os shaders a partir de um arquivo externo, compila e linka com o programa
         graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
 
+        // Carrega os dados a partir de um .obj e salva no std::vector<float> _positions
         loadObjFile(_positions,"resources/teapot.obj");
 
         //Criar o VAO
         graphics::renderer::VertexArrayObject vao;
         vao.bindBuffer();
 
-        //Colocar os dados no buffer(VBO)
+        // Colocar os dados no buffer(VBO)
         graphics::renderer::VertexBufferObject vbo;
 
+        // Copia os dados que estão em memoria da CPU para a GPU
         vbo.receiveData(_positions,GL_STATIC_DRAW);
 
+        // Irá linkar o VBO ao VAO e dizer como o opengl deve interpretar os dados e associe ao layout que foi criado o atributo pos
         GLuint pos = program.getAttribLocation("pos");
         vao.LinkVBO(vbo,pos);
 
@@ -64,37 +71,29 @@ namespace core
         // program.sendUniformMat4("mvp",mvp);
         program.sendUniformFloat("intensity",intensity);
         program.sendUniformFloat("transparency",transparency);
-        float rotation = 0.0f;
-        double prevTime = glfwGetTime();
+        // float rotation = 0.0f;
+        // double prevTime = glfwGetTime();
         std::cout << "Numero de vertices: " << _positions.size() << std:: endl;
+
+        auto windowDimensions = _window.getWindowDimensions();
+        Camera camera(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
+
+        glEnable(GL_DEPTH_TEST);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // render loop
         while (!_window.shouldClose())
         {
             // render
             glClearColor(red, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             program.use();
             vao.bindBuffer();
 
             auto deltaTime = calculateDeltaTime(lastFrameStartTime);
             _window.animateBackgroundColor(red, factor, deltaTime);
-            double crntTime = glfwGetTime();
-            if (crntTime - prevTime >= 1/60)
-            {
-                rotation += 0.5f;
-            }
-            glm::mat4 model = glm::mat4(1.0f);
-            glm::mat4 view = glm::mat4(1.0f);
-            glm::mat4 proj = glm::mat4(1.0f);
-
-            model = glm::rotate(model,glm::radians(rotation),glm::vec3(0.0f,1.0f,0.0f));
-            view = glm::translate(view,glm::vec3(-10.0f,10.0f,10.0f));
-            proj = glm::perspective(glm::radians(45.0f),_window.getAspectRatio(), 0.1f,100.f);
-
-            program.sendUniformMat4("model",model);
-            program.sendUniformMat4("view",view);
-            program.sendUniformMat4("proj",proj);
-
+            camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
+            camera.Inputs(_window.getGLFWwindow());
+ 
             intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
