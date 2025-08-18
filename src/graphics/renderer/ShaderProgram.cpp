@@ -8,12 +8,13 @@ namespace graphics
     namespace renderer
     {
         ShaderProgram::ShaderProgram(const char *vertexShaderFilePath, const char *fragmentshaderFilePath)
+        : _vsFilePath{vertexShaderFilePath},_fsFilePath{fragmentshaderFilePath}
         {
             std::cout << "Shader Program Constructor called" << '\n';
             try{
-                _vs = std::make_unique<graphics::renderer::Shader>(vertexShaderFilePath,GL_VERTEX_SHADER);
+                _vs = std::make_unique<graphics::renderer::Shader>(_vsFilePath,GL_VERTEX_SHADER);
 
-                _fs = std::make_unique<graphics::renderer::Shader>(fragmentshaderFilePath,GL_FRAGMENT_SHADER);
+                _fs = std::make_unique<graphics::renderer::Shader>(_fsFilePath,GL_FRAGMENT_SHADER);
 
                 _program = glCreateProgram();
                 attachShaders();
@@ -21,7 +22,7 @@ namespace graphics
             }
             catch(const std::exception& e)
             {
-                std::cerr << e.what() << '\n';
+                std::cerr << std::string(e.what()) << '\n';
             }
         }
 
@@ -30,6 +31,7 @@ namespace graphics
             std::cout << "ShaderProgram destructor called" << '\n';
             glDetachShader(_program,_vs->getShaderId());
             glDetachShader(_program,_fs->getShaderId());
+            glDeleteProgram(_program);
         }
 
         GLuint &ShaderProgram::getProgramId()
@@ -62,7 +64,7 @@ namespace graphics
                 std::cerr << "Uniform " << uniformVariable << " nao encontrado na pos: " << uniformVarLoc << std::endl;
             }
         }
-        
+
         void ShaderProgram::sendUniformFloat(const char *uniformVariable, float &vData)
         {
             GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
@@ -70,6 +72,42 @@ namespace graphics
                 glUniform1f(uniformVarLoc,vData);
             } else{
                 std::cerr << "Uniform " << uniformVariable << " nao encontrado!" << std::endl;
+            }
+        }
+
+        void ShaderProgram::recompileShaders(GLFWwindow *window)
+        {
+            if (glfwGetKey(window, GLFW_KEY_F6) == GLFW_PRESS)
+            {
+                recompileButtonClick = true;
+            }
+            else if(glfwGetKey(window, GLFW_KEY_F6) == GLFW_RELEASE && recompileButtonClick)
+            {
+                //@todo verificar se o arquivo ainda está disponivel
+                try
+                {
+                    recompileButtonClick = false;
+                    use();
+                    glDetachShader(_program,_vs->getShaderId());
+                    glDetachShader(_program,_fs->getShaderId());
+                    glLinkProgram(0);
+                    glDeleteProgram(_program);
+
+                    _vs.reset();
+                    _vs = nullptr;
+                    _vs = std::make_unique<graphics::renderer::Shader>(_vsFilePath,GL_VERTEX_SHADER);
+
+                    _fs.reset();
+                    _fs = nullptr;
+                    _fs = std::make_unique<graphics::renderer::Shader>(_fsFilePath,GL_FRAGMENT_SHADER);
+                    _program = glCreateProgram();
+                    attachShaders();
+                    linkShaders();
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << '\n';
+                }
             }
         }
 
