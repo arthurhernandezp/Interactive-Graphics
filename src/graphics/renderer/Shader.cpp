@@ -14,7 +14,7 @@ namespace graphics
             auto result = loadFromFile();
             if(!result)
             {
-                throw std::runtime_error("Nao foi possivel abrir o arquivo");
+                throw std::runtime_error(std::string("Nao foi possivel abrir o arquivo"));
             }
 
             _shaderSource = *result;
@@ -22,8 +22,8 @@ namespace graphics
             glShaderSource(_shader,1,&_shaderSource,NULL);
             if(!compileShader())
             {
-                throw std::runtime_error("Error ao compilador o shader do tipo " +
-                                        shaderType + std::string(": \n") + _infoLog);
+                throw std::runtime_error(std::string("Error ao compilador o shader do tipo " +
+                                        shaderType + std::string(": \n") + _infoLog));
             }
         }
 
@@ -34,11 +34,12 @@ namespace graphics
             glGetShaderiv(_shader,GL_COMPILE_STATUS,&sucess);
             if (!sucess)
             {
-                glGetShaderInfoLog(_shader, sizeof(_infoLog), NULL, _infoLog);
+                glGetShaderInfoLog(_shader, 512, NULL, _infoLog);
                 glDeleteShader(_shader);
                 _shader = 0;
                 return false;
             }
+            std::cout << "Shader: " << _shader << " compiled" << std::endl;
             return true;
         }
 
@@ -58,12 +59,12 @@ namespace graphics
             std::string line;
             std::string content;
             std::ifstream fileStream(_shaderFilePath,std::ios::in);
-            if (!fileStream.is_open()) 
+            if (!fileStream.is_open())
             {
                 std::cerr << "Could not read file " << _shaderFilePath << ". File does not exist." << std::endl;
                 return std::nullopt;
             }
-            while (!fileStream.eof()) 
+            while (!fileStream.eof())
             {
                 std::getline(fileStream, line);
                 content.append(line + "\n");
