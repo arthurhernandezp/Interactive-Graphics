@@ -31,6 +31,8 @@ namespace core
                 0.0f,1.0f,1.0f,
                 1.0f,1.0f,1.0f
             };
+
+            std::vector<int> triangleIndex;
     };
 
 } // namespace core

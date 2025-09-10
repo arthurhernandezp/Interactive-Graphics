@@ -7,7 +7,7 @@
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
-#include "graphics/renderer/ElementBuffer.hpp"
+
 #include "core/Camera.hpp"
 
 #include <array>
@@ -61,12 +61,12 @@ namespace core
         vbo.unbindBuffer();
 
         float intensity = 1.0f;
-        float transparency = 0.5f;
+        float transparency = 1.0f;
 
         [[maybe_unused]]auto num_points = _positions.size();
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
-        int factor = 1;
+        [[maybe_unused]] int factor = 1;
 
         // program.sendUniformMat4("mvp",mvp);
         program.sendUniformFloat("intensity",intensity);
@@ -89,11 +89,11 @@ namespace core
             program.use();
             vao.bindBuffer();
 
-            auto deltaTime = calculateDeltaTime(lastFrameStartTime);
-            _window.animateBackgroundColor(red, factor, deltaTime);
+             [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
+            // _window.animateBackgroundColor(red, factor, deltaTime);
             camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
 
-            intensity -= (0.08f * deltaTime) * factor;
+            // intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
 
@@ -128,7 +128,7 @@ namespace core
         while (std::getline(file, line))
         {
             std::string text;
-
+            std::vector<int> triangleMesh;
             file >> text;
             if (text == "v")
             {
@@ -142,6 +142,37 @@ namespace core
                 file >> value;
                 vertices.emplace_back(value);
 
+            }
+            if(text == "f")
+            {
+                std::vector<std::string> linha;
+                std::string comb;
+                file >> comb;
+                linha.emplace_back(comb);
+                file >> comb;
+                linha.emplace_back(comb);
+                
+                file >> comb;
+                linha.emplace_back(comb);
+
+                if(!comb.find('\n'))
+                {
+                    file >> comb;
+                    linha.emplace_back(comb);
+                }
+                    
+
+                for (auto p : linha)
+                {
+                    size_t slashPos = p.find('/');
+                    std::string firstPart = p.substr(0, slashPos);
+
+                    int vertexIndex = std::stoi(firstPart);
+                    triangleMesh.push_back(vertexIndex);
+                }
+                triangleMesh.shrink_to_fit();
+                // std::cout << "triangle mesh size: " << triangleMesh.size() << '\n';
+                
             }
         }
     }
