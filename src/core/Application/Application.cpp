@@ -59,7 +59,7 @@ namespace core
         // Unbind all to prevent accidentally modifying them
         vao.unbindBuffer();
         vbo.unbindBuffer();
-  
+
         float intensity = 1.0f;
         float transparency = 0.5f;
 
@@ -92,8 +92,7 @@ namespace core
             auto deltaTime = calculateDeltaTime(lastFrameStartTime);
             _window.animateBackgroundColor(red, factor, deltaTime);
             camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
-            camera.Inputs(_window.getGLFWwindow());
- 
+
             intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
@@ -104,6 +103,8 @@ namespace core
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
+            camera.Inputs(_window.getGLFWwindow());
+            program.recompileShaders(_window.getGLFWwindow());
         }
 
         glfwTerminate();
@@ -120,7 +121,7 @@ namespace core
             std::cout << "Can't open obj file " << objFilePath << std::endl;
             return;
         }
-        
+
         vertices.clear();
 
         std::string line;

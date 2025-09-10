@@ -20,7 +20,7 @@ namespace graphics
                 const char * _shaderFilePath;
                 //OpenGL shader id
                 GLuint _shader;
-                GLchar _infoLog[1024];
+                GLchar _infoLog[512];
         };
     } // namespace renderer
 } // namespace graphics
