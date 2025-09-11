@@ -15,7 +15,7 @@ namespace core
 
             int run();
         private:
-            void loadObjFile(std::vector<float> &vertices, const char * objFilePath) const;
+            void loadObjFile(std::vector<float> &vertices, const char * objFilePath);
             float calculateDeltaTime(float &lastFrameStartTime);
         private:
             graphics::Window _window;
@@ -33,6 +33,9 @@ namespace core
             };
 
             std::vector<int> triangleIndex;
+
+            bool activatePoints = false;
+            bool firstClick = true;
     };
 
 } // namespace core

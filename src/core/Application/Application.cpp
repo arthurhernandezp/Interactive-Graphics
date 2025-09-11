@@ -7,6 +7,7 @@
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
+#include "graphics/renderer/ElementBuffer.hpp"
 
 #include "core/Camera.hpp"
 
@@ -15,6 +16,7 @@
 #include <fstream>      // read obj file
 #include <iostream>
 #include <string>
+#include <sstream>
 
 namespace core
 {
@@ -41,7 +43,7 @@ namespace core
 
         // Carrega os dados a partir de um .obj e salva no std::vector<float> _positions
         loadObjFile(_positions,"resources/teapot.obj");
-
+        triangleIndex.shrink_to_fit();
         //Criar o VAO
         graphics::renderer::VertexArrayObject vao;
         vao.bindBuffer();
@@ -79,7 +81,10 @@ namespace core
         Camera camera(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
 
         glEnable(GL_DEPTH_TEST);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        std::cout << "Triangular mesh size: " << triangleIndex.size() << '\n';
+        graphics::renderer::ElementBufferObject EBO(triangleIndex.data(),triangleIndex.size());
         // render loop
         while (!_window.shouldClose())
         {
@@ -98,8 +103,24 @@ namespace core
             program.sendUniformFloat("transparency",intensity);
 
             glPointSize(1.5f);
-            glDrawArrays(GL_POINTS, 0,num_points);
+            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_P) == GLFW_PRESS)
+            {
+                if (firstClick)
+                {
+                    activatePoints = !activatePoints;
+                    firstClick = false;
+                }
+            }
+            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_P) == GLFW_RELEASE)
+            {
+                firstClick = true;
+            }
 
+            if(activatePoints)
+                glDrawArrays(GL_POINTS, 0,num_points);
+
+            EBO.bindBuffer();
+            glDrawElements(GL_TRIANGLES,triangleIndex.size(),GL_UNSIGNED_INT,0);
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
@@ -111,70 +132,64 @@ namespace core
         return 0;
     }
 
-    void Application::loadObjFile(std::vector<float> &vertices,const char *objFilePath) const
-    {
-        //Loads OBJ file from path
-        std::ifstream file;
-        file.open(objFilePath);
-        if (!file.good())
-        {
+    void Application::loadObjFile(std::vector<float>& vertices, const char* objFilePath) {
+        std::ifstream file(objFilePath);
+        if (!file.is_open()) {
             std::cout << "Can't open obj file " << objFilePath << std::endl;
             return;
         }
 
         vertices.clear();
+        triangleIndex.clear(); // Assumindo que triangleIndex é um std::vector<int> membro da classe
 
         std::string line;
-        while (std::getline(file, line))
-        {
-            std::string text;
-            std::vector<int> triangleMesh;
-            file >> text;
-            if (text == "v")
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string type;
+            iss >> type;
+
+            if (type == "v")
             {
-                float value;
-                file >> value;
-                vertices.emplace_back(value);
-
-                file >> value;
-                vertices.emplace_back(value);
-
-                file >> value;
-                vertices.emplace_back(value);
-
+                float x, y, z;
+                if (iss >> x >> y >> z) {
+                    vertices.push_back(x);
+                    vertices.push_back(y);
+                    vertices.push_back(z);
+                }
             }
-            if(text == "f")
-            {
-                std::vector<std::string> linha;
-                std::string comb;
-                file >> comb;
-                linha.emplace_back(comb);
-                file >> comb;
-                linha.emplace_back(comb);
-                
-                file >> comb;
-                linha.emplace_back(comb);
 
-                if(!comb.find('\n'))
-                {
-                    file >> comb;
-                    linha.emplace_back(comb);
+            else if (type == "f") {
+                std::vector<int> faceIndices;
+                std::string vertexData;
+                while (iss >> vertexData) {
+                    // Extrai o índice do vértice (antes da primeira '/')
+                    size_t slashPos = vertexData.find('/');
+                    std::string vertexIndexStr = vertexData.substr(0, slashPos);
+                    try {
+                        int vertexIndex = std::stoi(vertexIndexStr) - 1; // OBJ usa índices base 1
+                        faceIndices.push_back(vertexIndex);
+                    } catch (const std::exception& e) {
+                        std::cout << "Error parsing face index: " << vertexData << std::endl;
+                    }
                 }
-                    
 
-                for (auto p : linha)
-                {
-                    size_t slashPos = p.find('/');
-                    std::string firstPart = p.substr(0, slashPos);
-
-                    int vertexIndex = std::stoi(firstPart);
-                    triangleMesh.push_back(vertexIndex);
+                // Triangulação
+                if (faceIndices.size() >= 3) {
+                    triangleIndex.push_back(faceIndices[0]);
+                    triangleIndex.push_back(faceIndices[1]);
+                    triangleIndex.push_back(faceIndices[2]);
+                    if (faceIndices.size() == 4) { // face
+                        triangleIndex.push_back(faceIndices[0]);
+                        triangleIndex.push_back(faceIndices[2]);
+                        triangleIndex.push_back(faceIndices[3]);
+                    }
                 }
-                triangleMesh.shrink_to_fit();
-                // std::cout << "triangle mesh size: " << triangleMesh.size() << '\n';
-                
             }
         }
+
+        file.close();
+        std::cout << "Loaded " << vertices.size() / 3 << " vertices and "
+                << triangleIndex.size() / 3 << " triangles from " << objFilePath << std::endl;
     }
 
     float Application::calculateDeltaTime(float &lastFrameStartTime)

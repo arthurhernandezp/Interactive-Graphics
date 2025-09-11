@@ -9,7 +9,7 @@ namespace graphics
         {
         public:
             // Constructor that generates a Elements Buffer Object and links it to indices
-            ElementBufferObject(GLuint* indices, GLsizeiptr size);
+            ElementBufferObject(int* indices, GLsizeiptr size);
             ~ElementBufferObject();
             // Binds the EBO
             void bindBuffer();

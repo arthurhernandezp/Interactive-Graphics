@@ -4,7 +4,7 @@ namespace graphics
 {
     namespace renderer
     {
-        ElementBufferObject::ElementBufferObject(GLuint *indices, GLsizeiptr size)
+        ElementBufferObject::ElementBufferObject(int *indices, GLsizeiptr size)
         {
             glGenBuffers(1, &_ID);
             bindBuffer();
