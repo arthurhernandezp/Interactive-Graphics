@@ -1,6 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <optional>
+#include <string>
 namespace graphics
 {
     namespace renderer
@@ -13,9 +14,9 @@ namespace graphics
                 ~Shader();
             private:
                 bool compileShader();
-                std::optional<const char*> loadFromFile();
+                std::optional<std::string> loadFromFile();
             private:
-                const GLchar* _shaderSource;
+                std::string _shaderSource;
                 GLenum _shaderType;
                 const char * _shaderFilePath;
                 //OpenGL shader id

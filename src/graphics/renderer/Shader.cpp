@@ -17,9 +17,10 @@ namespace graphics
                 throw std::runtime_error(std::string("Nao foi possivel abrir o arquivo"));
             }
 
-            _shaderSource = *result;
+            _shaderSource = result.value();
+            const char * src = _shaderSource.c_str();
             _shader = glCreateShader(shaderType);
-            glShaderSource(_shader,1,&_shaderSource,NULL);
+            glShaderSource(_shader,1,&src,NULL);
             if(!compileShader())
             {
                 throw std::runtime_error(std::string("Error ao compilador o shader do tipo " +
@@ -54,7 +55,7 @@ namespace graphics
             glDeleteShader(_shader);
             _shader = 0;
         }
-        std::optional<const char*> Shader::loadFromFile()
+        std::optional<std::string> Shader::loadFromFile()
         {
             std::string line;
             std::string content;
@@ -71,7 +72,7 @@ namespace graphics
             }
             fileStream.close();
 
-            return content.c_str();
+            return content;
         }
     }
 }
