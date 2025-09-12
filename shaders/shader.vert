@@ -10,4 +10,4 @@ void main()
 {
     gl_Position = camMatrix * vec4(pos, 1);
     vColor = vec3(1.0f,1.0f,0.0f);
-};
+}

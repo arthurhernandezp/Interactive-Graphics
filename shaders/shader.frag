@@ -7,4 +7,4 @@ in vec3 vColor;
 void main()
 {
     color = vec4(vColor * intensity, transparency);
-};
+}
