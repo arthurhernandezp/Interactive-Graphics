@@ -58,10 +58,6 @@ namespace core
         GLuint pos = program.getAttribLocation("pos");
         vao.LinkVBO(vbo,pos);
 
-        // Unbind all to prevent accidentally modifying them
-        vao.unbindBuffer();
-        vbo.unbindBuffer();
-
         float intensity = 1.0f;
         float transparency = 1.0f;
 
@@ -84,7 +80,14 @@ namespace core
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         std::cout << "Triangular mesh size: " << triangleIndex.size() << '\n';
-        graphics::renderer::ElementBufferObject EBO(triangleIndex.data(),triangleIndex.size());
+        std::cout << "Triangular mesh capacity: " << triangleIndex.capacity() << '\n';
+        //Cria o element buffer object com os index do .obj que foram colocados no vector triangleIndex e agrupa no VAO
+        graphics::renderer::ElementBufferObject EBO(triangleIndex.data(),triangleIndex.size() * sizeof(triangleIndex.front()));
+        
+        // Unbind all to prevent accidentally modifying them
+        vao.unbindBuffer();
+        vbo.unbindBuffer();
+        EBO.unbindBuffer();
         // render loop
         while (!_window.shouldClose())
         {
@@ -119,7 +122,7 @@ namespace core
             if(activatePoints)
                 glDrawArrays(GL_POINTS, 0,num_points);
 
-            EBO.bindBuffer();
+            // EBO.bindBuffer();
             glDrawElements(GL_TRIANGLES,triangleIndex.size(),GL_UNSIGNED_INT,0);
             _window.swapBuffers();
             _window.pollEvents();
@@ -162,7 +165,7 @@ namespace core
                 std::vector<int> faceIndices;
                 std::string vertexData;
                 while (iss >> vertexData) {
-                    // Extrai o índice do vértice (antes da primeira '/')
+                    
                     size_t slashPos = vertexData.find('/');
                     std::string vertexIndexStr = vertexData.substr(0, slashPos);
                     try {
@@ -175,13 +178,10 @@ namespace core
 
                 // Triangulação
                 if (faceIndices.size() >= 3) {
-                    triangleIndex.push_back(faceIndices[0]);
-                    triangleIndex.push_back(faceIndices[1]);
-                    triangleIndex.push_back(faceIndices[2]);
-                    if (faceIndices.size() == 4) { // face
+                    for (size_t i = 1; i + 1 < faceIndices.size(); ++i) {
                         triangleIndex.push_back(faceIndices[0]);
-                        triangleIndex.push_back(faceIndices[2]);
-                        triangleIndex.push_back(faceIndices[3]);
+                        triangleIndex.push_back(faceIndices[i]);
+                        triangleIndex.push_back(faceIndices[i + 1]);
                     }
                 }
             }
