@@ -34,8 +34,8 @@ namespace core
 
             std::vector<int> triangleIndex;
 
-            bool activatePoints = false;
-            bool firstClick = true;
+            bool _activatePointsVisualization = false;
+            bool first_m_ButtonClick = true;
     };
 
 } // namespace core

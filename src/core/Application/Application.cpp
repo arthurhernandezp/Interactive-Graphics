@@ -106,24 +106,24 @@ namespace core
             program.sendUniformFloat("transparency",intensity);
 
             glPointSize(1.5f);
-            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_P) == GLFW_PRESS)
+            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
             {
-                if (firstClick)
+                if (first_m_ButtonClick)
                 {
-                    activatePoints = !activatePoints;
-                    firstClick = false;
+                    _activatePointsVisualization = !_activatePointsVisualization;
+                    first_m_ButtonClick = false;
                 }
             }
-            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_P) == GLFW_RELEASE)
+            if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_RELEASE)
             {
-                firstClick = true;
+                first_m_ButtonClick = true;
             }
 
-            if(activatePoints)
+            if(_activatePointsVisualization)
                 glDrawArrays(GL_POINTS, 0,num_points);
+            else
+                glDrawElements(GL_TRIANGLES,triangleIndex.size(),GL_UNSIGNED_INT,0);
 
-            // EBO.bindBuffer();
-            glDrawElements(GL_TRIANGLES,triangleIndex.size(),GL_UNSIGNED_INT,0);
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
