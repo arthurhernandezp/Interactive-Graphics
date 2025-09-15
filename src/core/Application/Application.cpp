@@ -65,8 +65,12 @@ namespace core
         float lastFrameStartTime = 0.0f;
         float red= 0.0f;
         [[maybe_unused]] int factor = 1;
+        glm::mat4 objPos = glm::mat4(1.0f);
+        objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
+        objPos = glm::translate(objPos, glm::vec3(0.0, 0.0, -5.0));
+        objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
 
-        // program.sendUniformMat4("mvp",mvp);
+        program.sendUniformMat4("objPos",objPos);
         program.sendUniformFloat("intensity",intensity);
         program.sendUniformFloat("transparency",transparency);
         // float rotation = 0.0f;
@@ -104,6 +108,7 @@ namespace core
             // intensity -= (0.08f * deltaTime) * factor;
             program.sendUniformFloat("intensity",intensity);
             program.sendUniformFloat("transparency",intensity);
+            program.sendUniformMat4("objPos",objPos);
 
             glPointSize(1.5f);
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
@@ -127,7 +132,7 @@ namespace core
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
-            camera.Inputs(_window.getGLFWwindow());
+            camera.Inputs(_window.getGLFWwindow(),deltaTime);
             program.recompileShaders(_window.getGLFWwindow());
         }
 

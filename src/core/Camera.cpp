@@ -10,6 +10,7 @@ namespace core
 
     void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, graphics::renderer::ShaderProgram &program, const char *uniform)
     {
+        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
         float size = 40.0f; 
@@ -21,11 +22,11 @@ namespace core
         else if (_projectionType == Camera::ORTOGRAPHICPROJECTION)
             projection = glm::ortho(-FOVdeg * aspectRatio, FOVdeg * aspectRatio, -size, size, nearPlane, farPlane * 100);
 
-        auto uniformMatrix = projection*view;
+        auto uniformMatrix = projection*view*model;
         program.sendUniformMat4(uniform,uniformMatrix);
     }
 
-    void Camera::Inputs(GLFWwindow *window)
+    void Camera::Inputs(GLFWwindow *window, float deltaTime)
     {
         // Handles key inputs
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -54,11 +55,11 @@ namespace core
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         {
-            _speed = 0.4f;
+            _speed = deltaTime * 10 * 2;
         }
         else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         {
-            _speed = 0.1f;
+            _speed = deltaTime * 10;
         }
 
         if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)

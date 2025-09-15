@@ -22,7 +22,7 @@ namespace core
             Camera(int width, int height, glm::vec3 position);
 
             void Matrix(float FOVdeg, float nearPlane, float farPlane, graphics::renderer::ShaderProgram &program, const char* uniform);
-            void Inputs(GLFWwindow* window);
+            void Inputs(GLFWwindow* window, float deltaTime);
 
         private:
 
@@ -35,7 +35,7 @@ namespace core
             int _width;
             int _height;
             glm::vec3 position;
-            float _speed = 0.1f;
+            float _speed = 0.05f;
             float sensitivity = 100.0f;
             int _projectionType = Camera::PERSPECTIVEPROJECTION;
     };
