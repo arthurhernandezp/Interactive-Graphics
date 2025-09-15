@@ -13,14 +13,20 @@ namespace core
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
-        float size = 40.0f; 
-        [[maybe_unused]]float aspectRatio = static_cast<float>(_width) / static_cast<float>(_height);
 
         view = glm::lookAt(position, position + _orientation, _up);
+
         if(_projectionType == Camera::PERSPECTIVEPROJECTION)
+        {
             projection = glm::perspective(glm::radians(FOVdeg), float(_width/_height),nearPlane, farPlane* 100);
+        }
         else if (_projectionType == Camera::ORTOGRAPHICPROJECTION)
-            projection = glm::ortho(-FOVdeg * aspectRatio, FOVdeg * aspectRatio, -size, size, nearPlane, farPlane * 100);
+        {
+            [[maybe_unused]]float aspectRatio = static_cast<float>(_width) / static_cast<float>(_height);
+            auto side = FOVdeg/10 * aspectRatio;
+            projection = glm::ortho(-side, side, -side, side, nearPlane, farPlane * 100);
+        }
+
 
         auto uniformMatrix = projection*view*model;
         program.sendUniformMat4(uniform,uniformMatrix);
