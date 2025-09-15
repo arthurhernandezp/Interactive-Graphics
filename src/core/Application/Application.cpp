@@ -67,7 +67,7 @@ namespace core
         [[maybe_unused]] int factor = 1;
         glm::mat4 objPos = glm::mat4(1.0f);
         objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
-        objPos = glm::translate(objPos, glm::vec3(0.0, 0.0, -5.0));
+        objPos = glm::translate(objPos, glm::vec3(0.0, 20.0, -5.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
 
         program.sendUniformMat4("objPos",objPos);
@@ -87,7 +87,7 @@ namespace core
         std::cout << "Triangular mesh capacity: " << triangleIndex.capacity() << '\n';
         //Cria o element buffer object com os index do .obj que foram colocados no vector triangleIndex e agrupa no VAO
         graphics::renderer::ElementBufferObject EBO(triangleIndex.data(),triangleIndex.size() * sizeof(triangleIndex.front()));
-        
+
         // Unbind all to prevent accidentally modifying them
         vao.unbindBuffer();
         vbo.unbindBuffer();
@@ -170,7 +170,7 @@ namespace core
                 std::vector<int> faceIndices;
                 std::string vertexData;
                 while (iss >> vertexData) {
-                    
+
                     size_t slashPos = vertexData.find('/');
                     std::string vertexIndexStr = vertexData.substr(0, slashPos);
                     try {
