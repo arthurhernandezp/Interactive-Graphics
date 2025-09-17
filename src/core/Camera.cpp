@@ -27,9 +27,18 @@ namespace core
             projection = glm::ortho(-side, side, -side, side, nearPlane, farPlane * 100);
         }
 
-
         auto uniformMatrix = projection*view*model;
-        program.sendUniformMat4(uniform,uniformMatrix);
+        program.sendUniform(uniform,uniformMatrix);
+
+        auto modelView = view * model;
+        program.sendUniform("modelView", modelView);
+ 
+        glm::mat3 normalMatrix = glm::inverse((glm::transpose(modelView)));
+        program.sendUniform("normalMatrix", normalMatrix);
+ 
+        glm::vec3 lightSource(0.0f, 1.0f, 2.0f);
+        program.sendUniform("ulightPos", lightSource);
+         
     }
 
     void Camera::Inputs(GLFWwindow *window, float deltaTime)

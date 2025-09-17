@@ -44,6 +44,8 @@ namespace core
         // Carrega os dados a partir de um .obj e salva no std::vector<float> _positions
         loadObjFile(_positions,"resources/teapot.obj");
         triangleIndex.shrink_to_fit();
+        normalVertex.shrink_to_fit();
+
         //Criar o VAO
         graphics::renderer::VertexArrayObject vao;
         vao.bindBuffer();
@@ -58,45 +60,48 @@ namespace core
         GLuint pos = program.getAttribLocation("pos");
         vao.LinkVBO(vbo,pos);
 
-        float intensity = 1.0f;
-        float transparency = 1.0f;
-
+        // Colocar os dados no buffer(VBO)
+        graphics::renderer::VertexBufferObject vbo_normal;
+        // Copia os dados que estão em memoria da CPU para a GPU
+        vbo_normal.receiveData(normalVertex,GL_STATIC_DRAW);
+        
+        GLuint normalAttrib = program.getAttribLocation("aNormal");
+        vao.LinkVBO(vbo_normal,normalAttrib);
+        
         [[maybe_unused]]auto num_points = _positions.size();
+
         float lastFrameStartTime = 0.0f;
-        float red= 0.0f;
-        [[maybe_unused]] int factor = 1;
+        
         glm::mat4 objPos = glm::mat4(1.0f);
         objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
-        objPos = glm::translate(objPos, glm::vec3(0.0, 20.0, -5.0));
+        objPos = glm::translate(objPos, glm::vec3(0.0, 0.0, -5.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
 
-        program.sendUniformMat4("objPos",objPos);
-        program.sendUniformFloat("intensity",intensity);
-        program.sendUniformFloat("transparency",transparency);
-        // float rotation = 0.0f;
-        // double prevTime = glfwGetTime();
-        std::cout << "Numero de vertices: " << _positions.size() << std:: endl;
+        program.sendUniform("objPos",objPos);
+
 
         auto windowDimensions = _window.getWindowDimensions();
         Camera camera(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
 
         glEnable(GL_DEPTH_TEST);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+        std::cout << "Numero de vertices: " << _positions.size()/3 << std:: endl;
+        std::cout << "Numero de Normal: " << normalVertex.size()/3 << '\n';
         std::cout << "Triangular mesh size: " << triangleIndex.size() << '\n';
-        std::cout << "Triangular mesh capacity: " << triangleIndex.capacity() << '\n';
+
         //Cria o element buffer object com os index do .obj que foram colocados no vector triangleIndex e agrupa no VAO
         graphics::renderer::ElementBufferObject EBO(triangleIndex.data(),triangleIndex.size() * sizeof(triangleIndex.front()));
-
+        
         // Unbind all to prevent accidentally modifying them
         vao.unbindBuffer();
         vbo.unbindBuffer();
         EBO.unbindBuffer();
+        
         // render loop
         while (!_window.shouldClose())
         {
             // render
-            glClearColor(red, 0.0f, 0.0f, 1.0f);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             program.use();
             vao.bindBuffer();
@@ -105,10 +110,7 @@ namespace core
             // _window.animateBackgroundColor(red, factor, deltaTime);
             camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
 
-            // intensity -= (0.08f * deltaTime) * factor;
-            program.sendUniformFloat("intensity",intensity);
-            program.sendUniformFloat("transparency",intensity);
-            program.sendUniformMat4("objPos",objPos);
+            program.sendUniform("objPos",objPos);
 
             glPointSize(1.5f);
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
@@ -166,11 +168,20 @@ namespace core
                 }
             }
 
+            else if (type == "vn")
+            {
+                float xn, yn, zn;
+                if(iss >> xn >> yn >> zn)
+                normalVertex.push_back(xn);
+                normalVertex.push_back(yn);
+                normalVertex.push_back(zn);
+            }
+
             else if (type == "f") {
                 std::vector<int> faceIndices;
                 std::string vertexData;
                 while (iss >> vertexData) {
-
+                    
                     size_t slashPos = vertexData.find('/');
                     std::string vertexIndexStr = vertexData.substr(0, slashPos);
                     try {

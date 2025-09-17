@@ -33,7 +33,7 @@ namespace core
             };
 
             std::vector<int> triangleIndex;
-
+            std::vector<float> normalVertex;
             bool _activatePointsVisualization = false;
             bool first_m_ButtonClick = true;
     };

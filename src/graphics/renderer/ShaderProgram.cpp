@@ -54,7 +54,7 @@ namespace graphics
             return glGetAttribLocation(_program,vertexAttribute);
         }
 
-        void ShaderProgram::sendUniformMat4(const char *uniformVariable,glm::mat4 &matrix)
+        void ShaderProgram::sendUniform(const char *uniformVariable,glm::mat4 &matrix)
         {
             GLint uniformVarLoc = glGetUniformLocation(_program,uniformVariable);
 
@@ -65,13 +65,34 @@ namespace graphics
             }
         }
 
-        void ShaderProgram::sendUniformFloat(const char *uniformVariable, float &vData)
+        void ShaderProgram::sendUniform(const char *uniformVariable, glm::mat3 &matrix)
+        {
+            GLint uniformVarLoc = glGetUniformLocation(_program,uniformVariable);
+
+            if (uniformVarLoc != -1){
+                glUniformMatrix3fv(uniformVarLoc, 1, GL_FALSE, glm::value_ptr(matrix));
+            } else{
+                std::cerr << "Uniform " << uniformVariable << " nao encontrado na pos: " << uniformVarLoc << std::endl;
+            }
+        }
+
+        void ShaderProgram::sendUniform(const char *uniformVariable, float &vData)
         {
             GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
             if (uniformVarLoc != -1){
                 glUniform1f(uniformVarLoc,vData);
             } else{
-                std::cerr << "Uniform " << uniformVariable << " nao encontrado!" << std::endl;
+                std::cerr << "Uniform " << uniformVariable << " nao encontrado na pos: " << uniformVarLoc << std::endl;
+            }
+        }
+
+        void ShaderProgram::sendUniform(const char *uniformVariable, glm::vec3 &vec)
+        {
+            GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
+            if (uniformVarLoc != -1){
+                glUniform3fv(uniformVarLoc,1,&vec[0]);
+            } else{
+                std::cerr << "Uniform " << uniformVariable << " nao encontrado na pos: " << uniformVarLoc << std::endl;
             }
         }
 
@@ -128,6 +149,5 @@ namespace graphics
                 std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << _infoLog << std::endl;
             }
         }
-
     } // namespace renderer
 } // namespace graphics
