@@ -36,7 +36,7 @@ namespace core
         glm::mat3 normalMatrix = glm::inverse((glm::transpose(modelView)));
         program.sendUniform("normalMatrix", normalMatrix);
  
-        glm::vec3 lightSource(0.0f, 1.0f, 2.0f);
+        glm::vec3 lightSource(0.0f, 10.0f, 2.0f);
         program.sendUniform("ulightPos", lightSource);
          
     }

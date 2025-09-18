@@ -15,10 +15,13 @@ namespace graphics
                 void bindBuffer() const;
                 void unbindBuffer() const;
 
+                unsigned int getLayout() const;
+                void setLayout(unsigned int attribLocation);
             private:
                 void generateBuffer();
             private:
                 GLuint _vbo;
+                unsigned int _layout;
         };
     }//namespace renderer
 } // namespace graphics

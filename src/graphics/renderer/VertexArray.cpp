@@ -17,11 +17,11 @@ namespace graphics
         }
 
         // Links a VBO to the VAO using a certain layout
-        void VertexArrayObject::LinkVBO(VertexBufferObject& VBO, GLuint layout)
+        void VertexArrayObject::LinkVBO(VertexBufferObject& VBO)
         {
             VBO.bindBuffer();
-            glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-            glEnableVertexAttribArray(layout);
+                glVertexAttribPointer(VBO.getLayout(), 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+                glEnableVertexAttribArray(VBO.getLayout());
             VBO.unbindBuffer();
         }
 

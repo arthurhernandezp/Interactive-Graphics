@@ -24,6 +24,16 @@ namespace graphics
             glBindBuffer(GL_ARRAY_BUFFER,0);
         }
 
+        unsigned int VertexBufferObject::getLayout() const
+        {
+            return _layout;
+        }
+
+        void VertexBufferObject::setLayout(unsigned int attribLocation)
+        {
+            _layout = attribLocation;
+        }
+
         void VertexBufferObject::generateBuffer()
         {
             glGenBuffers(1,&_vbo);

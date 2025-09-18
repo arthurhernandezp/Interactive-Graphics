@@ -20,5 +20,5 @@ void main()
     Normal = normalMatrix * aNormal;
     lightPos = normalize(vec3(camMatrix * vec4(ulightPos, 1.0)));
     gl_Position = camMatrix * objPos * vec4(pos, 1);
-    vColor = vec3(1.0f,1.0f,0.0f);
+    vColor = vec3(0.0f,0.0f,1.0f);
 }

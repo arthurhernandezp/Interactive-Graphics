@@ -12,28 +12,12 @@ namespace core
     {
         public:
             Application();
-
             int run();
         private:
-            void loadObjFile(std::vector<float> &vertices, const char * objFilePath);
             float calculateDeltaTime(float &lastFrameStartTime);
         private:
             graphics::Window _window;
 
-            //Default positions to debug
-            std::vector<float> _positions={
-                0.0f,0.0f,0.0f,
-                1.0f,0.0f,0.0f,
-                0.0f,1.0f,0.0f,
-                1.0f,1.0f,0.0f,
-                0.0f,0.0f,1.0f,
-                1.0f,0.0f,1.0f,
-                0.0f,1.0f,1.0f,
-                1.0f,1.0f,1.0f
-            };
-
-            std::vector<int> triangleIndex;
-            std::vector<float> normalVertex;
             bool _activatePointsVisualization = false;
             bool first_m_ButtonClick = true;
     };

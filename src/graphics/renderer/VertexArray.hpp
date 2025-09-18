@@ -12,7 +12,7 @@ namespace graphics
                 VertexArrayObject();
                 ~VertexArrayObject();
                 // Links a VBO to the VAO using a certain layout
-                void LinkVBO(VertexBufferObject& VBO, GLuint layout);
+                void LinkVBO(VertexBufferObject& VBO);
                 void bindBuffer();
                 void unbindBuffer();
                 GLuint getVAOId();
