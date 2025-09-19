@@ -17,13 +17,19 @@ namespace graphics
         {
             public:
                 Mesh(const std::string &objFilePath);
-                void draw() const;
-                void drawPointCloud() const;
-
                 ~Mesh();
+                void swapRenderMode();
+                void draw() const;
             private:
                 void loadObj();
             private:
+                enum class MeshRenderMode
+                {
+                    VERTICES_ONLY,
+                    FULLMESH
+                };
+                MeshRenderMode _renderMode = MeshRenderMode::FULLMESH;
+
                 std::string _objFilePath;
 
                 std::shared_ptr<graphics::renderer::VertexBufferObject> _vboPos;

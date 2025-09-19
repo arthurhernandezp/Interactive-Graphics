@@ -40,23 +40,26 @@ namespace graphics
             std::cout << "Triangular mesh size: " << _indices.size() << '\n';
         }
 
-        void Mesh::draw() const 
-        {
-            _vao->bindBuffer();
-            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-            _vao->unbindBuffer();
-        }
-
-        void Mesh::drawPointCloud() const
-        {
-            _vao->bindBuffer();
-            glDrawArrays(GL_POINTS, 0,_vertices.size());
-            _vao->unbindBuffer();
-        }
-
         Mesh::~Mesh()
         {
             std::cout << "Destroying mesh" << '\n';
+        }
+
+        void Mesh::draw() const
+        {
+            auto drawMesh   = [&] { glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0); };
+            auto drawVertex = [&] { glDrawArrays(GL_POINTS, 0,_vertices.size());  };
+
+            _vao->bindBuffer();
+            (_renderMode == MeshRenderMode::FULLMESH) ?  drawMesh() : drawVertex();
+            _vao->unbindBuffer();
+        }
+
+        void Mesh::swapRenderMode()
+        {
+            (_renderMode == MeshRenderMode::FULLMESH) ?
+            _renderMode = MeshRenderMode::VERTICES_ONLY :
+            _renderMode = MeshRenderMode::FULLMESH;
         }
 
         void Mesh::loadObj()

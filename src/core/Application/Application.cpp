@@ -42,8 +42,6 @@ namespace core
 
         // Carrega os shaders a partir de um arquivo externo, compila e linka com o programa
         graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
-
-        // std::string objFilePath ("resources/teapot.obj");
         graphics::mesh::Mesh mesh("resources/teapot.obj");
 
         float lastFrameStartTime = 0.0f;
@@ -68,26 +66,22 @@ namespace core
             program.use();
             camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
             program.sendUniform("objPos",objPos);
+            glPointSize(1.5f);
 
-            glPointSize(1.0f);
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
             {
                 if (first_m_ButtonClick)
                 {
-                    _activatePointsVisualization = !_activatePointsVisualization;
+                    mesh.swapRenderMode();
                     first_m_ButtonClick = false;
                 }
             }
-
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_RELEASE)
             {
                 first_m_ButtonClick = true;
             }
 
-            if(_activatePointsVisualization)
-                mesh.drawPointCloud();
-            else
-                mesh.draw();
+            mesh.draw();
 
             [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
             _window.swapBuffers();
