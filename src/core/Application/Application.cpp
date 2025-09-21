@@ -3,22 +3,14 @@
 #include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 
-#include "graphics/renderer/Shader.hpp"
-#include "graphics/renderer/VertexBuffer.hpp"
-#include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ShaderProgram.hpp"
-#include "graphics/renderer/ElementBuffer.hpp"
 
 #include "graphics/mesh/Mesh.hpp"
 #include "graphics/lighting/Light.hpp"
 #include "core/Camera.hpp"
 
-#include <array>
 #include <memory>       // unique_ptr
-#include <fstream>      // read obj file
 #include <iostream>
-#include <string>
-#include <sstream>
 
 namespace core
 {
