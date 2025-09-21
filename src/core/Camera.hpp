@@ -20,10 +20,8 @@ namespace core
         };
         public:
             Camera(int width, int height, glm::vec3 position);
-
-            void Matrix(float FOVdeg, float nearPlane, float farPlane, graphics::renderer::ShaderProgram &program, const char* uniform);
+            void Matrix(float FOVdeg, float nearPlane, float farPlane, glm::mat4 &view,glm::mat4 &projection);
             void Inputs(GLFWwindow* window, float deltaTime);
-
         private:
 
         private:

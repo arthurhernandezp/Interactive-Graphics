@@ -60,11 +60,32 @@ namespace core
         // render loop
         while (!_window.shouldClose())
         {
+            glm::mat4 model(1.0f);
+            glm::mat4 view(1.0f);
+            glm::mat4 projection(1.0f);
+
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             program.use();
-            camera.Matrix(45.0f,0.1f,100.0f,program,"camMatrix");
+
+            camera.Matrix(45.0f,0.1f,100.0f,view,projection);
+
+            auto camMatrix = projection * view * model;
+            program.use();
+            program.sendUniform("camMatrix",camMatrix);
+
+            auto modelView = view * model;
+
+            program.sendUniform("modelView", modelView);
+
+            glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
+
+            program.sendUniform("normalMatrix", normalMatrix);
+
+            glm::vec3 lightSource(0.0f, 1.0f, 0.0f);
+            program.sendUniform("ulightPos", lightSource);
+
             program.sendUniform("objPos",objPos);
             glPointSize(1.5f);
 

@@ -17,7 +17,7 @@ uniform mat3 normalMatrix;
 void main()
 {
     FragPos = vec3(modelView * vec4(pos, 1.0));
-    Normal = normalMatrix * aNormal;
+    Normal = normalMatrix * mat3(objPos) * aNormal;
     lightPos = normalize(vec3(camMatrix * vec4(ulightPos, 1.0)));
     gl_Position = camMatrix * objPos * vec4(pos, 1);
     vColor = vec3(0.0f,0.0f,1.0f);

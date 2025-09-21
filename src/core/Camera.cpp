@@ -8,12 +8,8 @@ namespace core
 
     }
 
-    void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, graphics::renderer::ShaderProgram &program, const char *uniform)
+    void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, glm::mat4 &view , glm::mat4 &projection)
     {
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
-
         view = glm::lookAt(position, position + _orientation, _up);
 
         if(_projectionType == Camera::PERSPECTIVEPROJECTION)
@@ -26,19 +22,6 @@ namespace core
             auto side = FOVdeg/10 * aspectRatio;
             projection = glm::ortho(-side, side, -side, side, nearPlane, farPlane * 100);
         }
-
-        auto uniformMatrix = projection*view*model;
-        program.sendUniform(uniform,uniformMatrix);
-
-        auto modelView = view * model;
-        program.sendUniform("modelView", modelView);
- 
-        glm::mat3 normalMatrix = glm::inverse((glm::transpose(modelView)));
-        program.sendUniform("normalMatrix", normalMatrix);
- 
-        glm::vec3 lightSource(0.0f, 10.0f, 2.0f);
-        program.sendUniform("ulightPos", lightSource);
-         
     }
 
     void Camera::Inputs(GLFWwindow *window, float deltaTime)
@@ -141,5 +124,4 @@ namespace core
             }
         }
     }
-
 } // namespace core
