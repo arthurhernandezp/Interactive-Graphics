@@ -10,7 +10,7 @@
 #include "graphics/renderer/ElementBuffer.hpp"
 
 #include "graphics/mesh/Mesh.hpp"
-
+#include "graphics/lighting/Light.hpp"
 #include "core/Camera.hpp"
 
 #include <array>
@@ -41,16 +41,19 @@ namespace core
         }
 
         // Carrega os shaders a partir de um arquivo externo, compila e linka com o programa
-        graphics::renderer::ShaderProgram program("shaders/shader.vert","shaders/shader.frag");
+        graphics::renderer::ShaderProgram meshProgram("shaders/shader.vert","shaders/shader.frag");
         graphics::mesh::Mesh mesh("resources/teapot.obj");
 
+        graphics::renderer::ShaderProgram lightProgram("shaders/light.vert","shaders/light.frag");
+        [[maybe_unused]] graphics::lighting::Light light;
+
         float lastFrameStartTime = 0.0f;
-        
+
         glm::mat4 objPos = glm::mat4(1.0f);
-        objPos = glm::translate(objPos, glm::vec3(0.0, -5.0, 0.0));
+        objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, 10.0));
         objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
-        program.sendUniform("objPos",objPos);
+        meshProgram.sendUniform("objPos",objPos);
 
         auto windowDimensions = _window.getWindowDimensions();
         Camera camera(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
@@ -67,26 +70,25 @@ namespace core
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            program.use();
+            meshProgram.use();
 
             camera.Matrix(45.0f,0.1f,100.0f,view,projection);
 
             auto camMatrix = projection * view * model;
-            program.use();
-            program.sendUniform("camMatrix",camMatrix);
+            meshProgram.use();
+            meshProgram.sendUniform("camMatrix",camMatrix);
 
             auto modelView = view * model;
 
-            program.sendUniform("modelView", modelView);
+            meshProgram.sendUniform("modelView", modelView);
 
             glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
 
-            program.sendUniform("normalMatrix", normalMatrix);
+            meshProgram.sendUniform("normalMatrix", normalMatrix);
 
-            glm::vec3 lightSource(0.0f, 1.0f, 0.0f);
-            program.sendUniform("ulightPos", lightSource);
+            meshProgram.sendUniform("ulightPos", light.getLightSource());
 
-            program.sendUniform("objPos",objPos);
+            meshProgram.sendUniform("objPos",objPos);
             glPointSize(1.5f);
 
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
@@ -104,12 +106,16 @@ namespace core
 
             mesh.draw();
 
+            lightProgram.use();
+            lightProgram.sendUniform("camMatrix",camMatrix);
+            light.draw();
+
             [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
             camera.Inputs(_window.getGLFWwindow(),deltaTime);
-            program.recompileShaders(_window.getGLFWwindow());
+            meshProgram.recompileShaders(_window.getGLFWwindow());
         }
 
         glfwTerminate();
