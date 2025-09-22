@@ -21,24 +21,18 @@ namespace graphics
                 glm::vec3& getLightSource();
 
             private:
-
+                void createCubeLight();
+                void createCubeIndices();
             private:
+                float cubeSize = 2.0f; // metade do comprimento da aresta do cubo
+
+                std::vector<float> cubeVertices;
+                std::vector<int> cubeIndices;
                 std::shared_ptr<graphics::renderer::VertexBufferObject> _vboPos;
                 std::shared_ptr<graphics::renderer::VertexArrayObject> _vao;
-                std::vector<float> _directionalLightVertex{10.0f,  0.0f,  0.0f,
-                                                     0.0f,  0.0f, 0.0f,
-                                                     -10.f, 0.0f, 0.0f,
-                                                     0.0f, -10.0f, 0.0f,
-                                                    0.0f,  0.0f, 0.0f,
-                                                    0.0f,  10.0f, 0.0f,
-                                                    0.0f,  0.0f, 10.0f,
-                                                    0.0f,  0.0f, 0.0f,
-                                                    0.0f,  0.0f, -10.0f,
-                                                    0.0f,0.0f,0.0f,
-                                                    0.0f, 10.0f, 10.0f,
-                                                    0.0f, 10.0f, 10.0f
-                                                    };
-                glm::vec3 _lightSource = glm::vec3(0.0f, 10.0f, 10.0f);
+                std::shared_ptr<graphics::renderer::ElementBufferObject> _ebo;
+
+                glm::vec3 _lightSource = glm::vec3(0.0f, 10.0f, 3.0f);
         };
     } // namespace lighting
 

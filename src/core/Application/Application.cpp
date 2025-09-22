@@ -42,7 +42,7 @@ namespace core
         float lastFrameStartTime = 0.0f;
 
         glm::mat4 objPos = glm::mat4(1.0f);
-        objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, 10.0));
+        objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, 20.0));
         objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
         meshProgram.sendUniform("objPos",objPos);
