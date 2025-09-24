@@ -38,11 +38,12 @@ namespace core
 
         graphics::renderer::ShaderProgram lightProgram("shaders/light.vert","shaders/light.frag");
         [[maybe_unused]] graphics::lighting::Light light;
+        glm::mat4 lightPosition = glm::mat4(1.0f);
 
         float lastFrameStartTime = 0.0f;
 
         glm::mat4 objPos = glm::mat4(1.0f);
-        objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, -20.0));
+        // objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, -10.0));
         objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
         meshProgram.sendUniform("objPos",objPos);
@@ -53,9 +54,10 @@ namespace core
         glEnable(GL_DEPTH_TEST);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // render loop
-        glm::mat4 lightPosition = glm::mat4(1.0f);
         while (!_window.shouldClose())
         {
+            [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
+
             glm::mat4 model(1.0f);
             glm::mat4 view(1.0f);
             glm::mat4 projection(1.0f);
@@ -66,7 +68,7 @@ namespace core
             meshProgram.use();
 
             camera.Matrix(45.0f,0.1f,100.0f,view,projection);
-
+            //@todo melhorar esse envio de uniform para o shader e encapsular a rotação da iluminação
             auto camMatrix = projection * view * model;
             meshProgram.use();
             meshProgram.sendUniform("camMatrix",camMatrix);
@@ -77,8 +79,12 @@ namespace core
             glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
 
             meshProgram.sendUniform("normalMatrix", normalMatrix);
-            auto lightSource = light.getLightSource();
-            meshProgram.sendUniform("ulightPos", lightSource);
+
+            glm::mat4 lightRotation = glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime * 60.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f)));
+
+            light.lightSource = lightRotation * glm::vec4(light.lightSource, 1.0f);
+
+            meshProgram.sendUniform("ulightPos", light.lightSource);
 
             meshProgram.sendUniform("objPos",objPos);
             glPointSize(1.5f);
@@ -96,14 +102,11 @@ namespace core
             }
 
             mesh.draw();
-
             lightProgram.use();
+            lightPosition *= lightRotation;
             lightProgram.sendUniform("camMatrix",camMatrix);
-            light.draw();
-
-            [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
-
             lightProgram.sendUniform("ulightPos",lightPosition);
+            light.draw();
 
             _window.swapBuffers();
             _window.pollEvents();

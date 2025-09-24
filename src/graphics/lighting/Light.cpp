@@ -45,18 +45,14 @@ namespace graphics
             glDrawElements(GL_TRIANGLES, cubeIndices.size(), GL_UNSIGNED_INT, 0);
             _vao->unbindBuffer();
         }
-        glm::vec3& Light::getLightSource()
-        {
-            return _lightSource;
-        }
 
         void Light::createCubeLight()
         {
             float hs = cubeSize / 2.0f; // half size
 
-            glm::vec3 center = _lightSource;
+            glm::vec3 center = lightSource;
 
-            cubeVertices.clear(); 
+            cubeVertices.clear();
             // Define os 8 vértices do cubo
             std::vector<glm::vec3> positions = {
                 center + glm::vec3(-hs, -hs, -hs), // 0
@@ -68,7 +64,7 @@ namespace graphics
                 center + glm::vec3( hs,  hs,  hs), // 6
                 center + glm::vec3(-hs,  hs,  hs)  // 7
             };
- 
+
             // Insere cada vértice como float (x, y, z)
             for (const auto& pos : positions)
             {
