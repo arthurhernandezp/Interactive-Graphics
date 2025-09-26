@@ -6,14 +6,16 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec3 lightPos;
 
+uniform float uLightIntensity;
+uniform float uAmbientStrength;
+uniform float uSpecularStrength;
+
 void main()
 {
     vec3 lightColor = vec3(1.0f,1.0f,1.0f);
-    float lightIntensity = 0.5;
 
     // Luz ambiente
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = uAmbientStrength * lightColor;
 
     // Diffuse light
     vec3 norm = normalize(Normal);
@@ -25,10 +27,10 @@ void main()
     vec3 E = normalize(-FragPos);
     vec3 L = normalize(lightDir);
     vec3 H = normalize(L + E);
-    float specularStrength = 0.9;
-    float spec = pow(max(dot(norm, H), 0.0), 64);
-    vec3 specular = specularStrength * spec * lightColor;  
 
-    vec3 result = lightIntensity * ( (ambient + diffuse + specular) * objectColor );
+    float spec = pow(max(dot(norm, H), 0.0), 64);
+    vec3 specular = uSpecularStrength * spec * lightColor;
+
+    vec3 result = uLightIntensity * ( (ambient + diffuse + specular) * objectColor );
     color = vec4(result, 1.0);
 }

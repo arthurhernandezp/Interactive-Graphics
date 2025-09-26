@@ -85,6 +85,9 @@ namespace core
             light.lightSource = lightRotation * glm::vec4(light.lightSource, 1.0f);
 
             meshProgram.sendUniform("ulightPos", light.lightSource);
+            meshProgram.sendUniform("uLightIntensity",light.intensity);
+            meshProgram.sendUniform("uAmbientStrength",light.ambientIntensity);
+            meshProgram.sendUniform("uSpecularStrength",light.specularStrength);
 
             meshProgram.sendUniform("objPos",objPos);
             glPointSize(1.5f);
