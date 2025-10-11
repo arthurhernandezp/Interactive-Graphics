@@ -25,3 +25,4 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 add_subdirectory(src)
 add_subdirectory(external)
+add_subdirectory(tests)
