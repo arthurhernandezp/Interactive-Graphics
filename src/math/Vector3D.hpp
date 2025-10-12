@@ -5,27 +5,19 @@ namespace math
 {
     struct Vector3D
     {
-        float x,y,z;
+        float x,y,z{};
+
         Vector3D() = default;
+        Vector3D(float a, float b, float c);
+        ~Vector3D();
 
-        Vector3D(float a, float b, float c) : x{a},y{b},z{c}
-        {
-            std::cout << "Vector3d constructor called" << '\n';
-        }
+        float& operator [](int i);
+        const float& operator [](int i) const;
+        Vector3D operator +(const Vector3D &rhs) const;
+        Vector3D operator -(const Vector3D &rhs) const;
+        void operator =(const Vector3D &rhs);
+        void operator +=(const Vector3D &rhs);
+        void operator -=(const Vector3D &rhs);
 
-        ~Vector3D()
-        {
-            std::cout << "Destroying Vector3d" << '\n';
-        }
-
-        float& operator [](int i)
-        {
-            return ((&x)[i]);
-        }
-
-        const float& operator [](int i) const
-        {
-            return ((&x)[i]);
-        }
     };
 } // namespace math
