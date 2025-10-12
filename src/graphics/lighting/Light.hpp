@@ -20,6 +20,7 @@ namespace graphics
                 void draw() const;
                 glm::vec3 lightSource = glm::vec3(0.0f, 20.0f, 3.0f);
 
+                glm::vec3 lightColor = glm::vec3(1.0f,1.0f,1.0f);
                 float intensity = 0.5;
                 float ambientIntensity = 0.1;
                 float specularStrength = 0.9;

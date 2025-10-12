@@ -1,7 +1,8 @@
 #version 330
 layout(location=0) out vec4 color;
 
+uniform vec3 uLightColor;
 void main()
 {
-    color = vec4(vec3(1.0f,1.0f,1.0f),1.0f);
+    color = vec4(uLightColor,1.0f);
 }

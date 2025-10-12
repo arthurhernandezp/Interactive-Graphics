@@ -88,6 +88,7 @@ namespace core
             meshProgram.sendUniform("uLightIntensity",light.intensity);
             meshProgram.sendUniform("uAmbientStrength",light.ambientIntensity);
             meshProgram.sendUniform("uSpecularStrength",light.specularStrength);
+            meshProgram.sendUniform("uLightColor",light.lightColor);
 
             meshProgram.sendUniform("objPos",objPos);
             glPointSize(1.5f);
@@ -108,6 +109,7 @@ namespace core
             lightProgram.use();
             lightPosition *= lightRotation;
             lightProgram.sendUniform("camMatrix",camMatrix);
+            lightProgram.sendUniform("uLightColor",light.lightColor);
             lightProgram.sendUniform("ulightPos",lightPosition);
             light.draw();
 
