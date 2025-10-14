@@ -81,3 +81,11 @@ TEST(Vector3DTest,MinusEqualVector3D)
     EXPECT_EQ(vec1.y, -1.0f);
     EXPECT_EQ(vec1.z, 0.0f);
 }
+
+TEST(Vector3DTest,InvalidAcessVector3D)
+{
+    math::Vector3D vec1(1.0f,2.0f,3.0f);
+
+    EXPECT_THROW(vec1[4],std::runtime_error);
+    EXPECT_THROW(vec1[-1],std::runtime_error);
+}
