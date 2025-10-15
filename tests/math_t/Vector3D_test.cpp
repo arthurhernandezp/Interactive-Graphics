@@ -89,3 +89,32 @@ TEST(Vector3DTest,InvalidAcessVector3D)
     EXPECT_THROW(vec1[4],std::runtime_error);
     EXPECT_THROW(vec1[-1],std::runtime_error);
 }
+
+TEST(Vector3DTest,MagnitudeVector3D)
+{
+    math::Vector3D vec(2.0f,1.0f,2.0f);
+
+    int magnitude = vec.magnitude();
+
+    EXPECT_EQ(magnitude,3);
+}
+
+TEST(Vector3DTest,ZeroMagnitudeVector3D)
+{
+    math::Vector3D vec;
+
+    int magnitude = vec.magnitude();
+
+    EXPECT_EQ(magnitude,0);
+}
+
+TEST(Vector3DTest,ScalarMultiplicationMagnitudeVector3D)
+{
+    math::Vector3D vec1(2.0f,1.0f,2.0f);
+    math::Vector3D vec2(4.0f,2.0f,4.0f);
+
+    int magnitudeVec1 = vec1.magnitude();
+    int magnitudeVec2 = vec2.magnitude();
+
+    EXPECT_EQ( magnitudeVec1 * 2, magnitudeVec2 );
+}

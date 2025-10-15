@@ -1,5 +1,6 @@
 #include "Vector3D.hpp"
 #include <stdexcept>
+#include <cmath>
 namespace math
 {
     Vector3D::Vector3D(float a, float b, float c) : x{a},y{b},z{c}
@@ -9,6 +10,12 @@ namespace math
     Vector3D::~Vector3D()
     {
         std::cout << "Destroying Vector3d" << '\n';
+    }
+
+    int Vector3D::magnitude() const
+    {
+        int magnitude = std::sqrt( std::pow(x,2) + std::pow(y,2) + std::pow(z,2) );
+        return magnitude;
     }
 
     float &Vector3D::operator[](int i)
