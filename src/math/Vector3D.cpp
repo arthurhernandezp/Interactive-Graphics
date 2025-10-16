@@ -12,10 +12,20 @@ namespace math
         std::cout << "Destroying Vector3d" << '\n';
     }
 
-    int Vector3D::magnitude() const
+    float Vector3D::magnitude() const
     {
-        int magnitude = std::sqrt( std::pow(x,2) + std::pow(y,2) + std::pow(z,2) );
+        float magnitude = std::sqrt( std::pow(x,2) + std::pow(y,2) + std::pow(z,2) );
         return magnitude;
+    }
+
+    Vector3D Vector3D::normalize()
+    {
+        float magnitude = this->magnitude();
+
+        if(magnitude == 0.0f)
+            return Vector3D(0.0f,0.0f,0.0f);
+
+        return Vector3D(*this /magnitude );
     }
 
     float &Vector3D::operator[](int i)
@@ -42,6 +52,15 @@ namespace math
     Vector3D Vector3D::operator-(const Vector3D &rhs) const
     {
         return Vector3D(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
+    }
+
+    Vector3D Vector3D::operator/(float s)
+    {
+        if(s == 0)
+            throw std::runtime_error("Error ao dividir por 0");
+
+        s = 1.0f / s;
+        return Vector3D(x*s, y * s, z *s);
     }
 
     void Vector3D::operator+=(const Vector3D &rhs)

@@ -13,8 +13,8 @@ namespace math
         Vector3D(float a, float b, float c);
         ~Vector3D();
 
-        int magnitude() const;
-
+        float magnitude() const;
+        Vector3D normalize();
         /*
         *================================================
         *   OPERATOR OVERLOAD
@@ -24,9 +24,12 @@ namespace math
         const float& operator [](int i) const;
         Vector3D operator +(const Vector3D &rhs) const;
         Vector3D operator -(const Vector3D &rhs) const;
+        Vector3D operator /(float s);
         void operator =(const Vector3D &rhs);
         void operator +=(const Vector3D &rhs);
         void operator -=(const Vector3D &rhs);
 
     };
+
+
 } // namespace math

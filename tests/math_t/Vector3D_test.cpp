@@ -82,6 +82,23 @@ TEST(Vector3DTest,MinusEqualVector3D)
     EXPECT_EQ(vec1.z, 0.0f);
 }
 
+TEST(Vector3DTest,DivideVector3D)
+{
+    math::Vector3D vec1(2.0f,4.0f,6.0f);
+    math::Vector3D vec2 = vec1 / 2;
+
+    EXPECT_EQ(vec2.x, 1.0f);
+    EXPECT_EQ(vec2.y, 2.0f);
+    EXPECT_EQ(vec2.z, 3.0f);
+}
+
+TEST(Vector3DTest,DivideByZeroVector3D)
+{
+    math::Vector3D vec1(2.0f,4.0f,6.0f);
+
+    EXPECT_ANY_THROW(vec1 / 0);
+}
+
 TEST(Vector3DTest,InvalidAcessVector3D)
 {
     math::Vector3D vec1(1.0f,2.0f,3.0f);
@@ -97,6 +114,17 @@ TEST(Vector3DTest,MagnitudeVector3D)
     int magnitude = vec.magnitude();
 
     EXPECT_EQ(magnitude,3);
+}
+
+TEST(Vector3DTest, NormalizeZeroVector)
+{
+    math::Vector3D vec(0.0f, 0.0f, 0.0f);
+
+    auto normalizedVector = vec.normalize();
+
+    EXPECT_EQ(normalizedVector.x, 0.0f);
+    EXPECT_EQ(normalizedVector.y, 0.0f);
+    EXPECT_EQ(normalizedVector.z, 0.0f);
 }
 
 TEST(Vector3DTest,ZeroMagnitudeVector3D)
