@@ -38,7 +38,15 @@ namespace math
         auto normalizedVector = *this;
         return Vector3D( normalizedVector /magnitude );
     }
-    
+
+    Vector3D Vector3D::crossProduct(const Vector3D &rhs) const
+    {
+        float normalX = y * rhs.z - z * rhs.y;
+        float normalY = z * rhs.x - x * rhs.z;
+        float normalZ = x * rhs.y - y * rhs.x;
+        return Vector3D(normalX, normalY , normalZ);
+    }
+
     float Vector3D::dotProduct(const Vector3D &rhs) const
     {
         return ( (this->x * rhs.x) + (this->y * rhs.y) + (this->z * rhs.z) );

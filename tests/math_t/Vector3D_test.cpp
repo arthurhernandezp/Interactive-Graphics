@@ -176,3 +176,15 @@ TEST(Vector3DTest,DotProductPerpendicularVector3D)
 
     EXPECT_EQ(dotProductResult,0);
 }
+
+TEST(Vector3DTest,CrossProductVector3D)
+{
+    math::Vector3D a(2.0f,3.0f,4.0f);
+    math::Vector3D b(5.0f,6.0f,7.0f);
+
+    math::Vector3D crossProductResult = a.crossProduct(b);
+
+    ASSERT_EQ(crossProductResult.x,-3);
+    ASSERT_EQ(crossProductResult.y,6);
+    ASSERT_EQ(crossProductResult.z,-3);
+}

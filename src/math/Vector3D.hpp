@@ -15,8 +15,9 @@ namespace math
         float magnitude() const;
         void normalize();                               // Normaliza o proprio vector        
         Vector3D normalized() const;                    // Retorna uma copia normalizada
-        
-        float dotProduct(const Vector3D &rhs) const;
+
+        Vector3D crossProduct(const Vector3D &rhs) const;
+        float dotProduct(const Vector3D &rhs) const;    
 
         /*
         *================================================
@@ -28,8 +29,8 @@ namespace math
 
         void operator +=(const Vector3D &rhs);
         void operator -=(const Vector3D &rhs);
-        void operator/=(float s);
-        void operator*=(float s);
+        void operator /=(float s);
+        void operator *=(float s);
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Vector3D& v)
@@ -49,6 +50,5 @@ namespace math
     Vector3D operator*(const Vector3D& v, float s);
     Vector3D operator*(float s, const Vector3D& v); 
     Vector3D operator -(const Vector3D &lhs);            // Negando o vetor
-
 
 } // namespace math
