@@ -49,6 +49,16 @@ TEST(Vector3DTest,SubVector3D)
     EXPECT_EQ(vec3.z, 0.0f);
 }
 
+TEST(Vector3DTest,NegativeVector3D)
+{
+    math::Vector3D vec1(1.0f,2.0f,3.0f);
+    math::Vector3D vec2 = -vec1;
+
+    EXPECT_EQ(vec2.x, -1.0f);
+    EXPECT_EQ(vec2.y, -2.0f);
+    EXPECT_EQ(vec2.z, -3.0f);
+}
+
 TEST(Vector3DTest,AssignmentVector3D)
 {
     math::Vector3D vec1(1.0f,2.0f,3.0f);
@@ -120,7 +130,7 @@ TEST(Vector3DTest, NormalizeZeroVector)
 {
     math::Vector3D vec(0.0f, 0.0f, 0.0f);
 
-    auto normalizedVector = vec.normalize();
+    auto normalizedVector = vec.normalized();
 
     EXPECT_EQ(normalizedVector.x, 0.0f);
     EXPECT_EQ(normalizedVector.y, 0.0f);
