@@ -38,11 +38,17 @@ namespace math
         auto normalizedVector = *this;
         return Vector3D( normalizedVector /magnitude );
     }
+    
+    float Vector3D::dotProduct(const Vector3D &rhs) const
+    {
+        return ( (this->x * rhs.x) + (this->y * rhs.y) + (this->z * rhs.z) );
+    }
+
     /*
-    *================================================
-    *   OPERATOR OVERLOAD QUE MODIFICAM A STRUCT 
-    *================================================
-    */
+     *================================================
+     *   OPERATOR OVERLOAD QUE MODIFICAM A STRUCT
+     *================================================
+     */
     float &Vector3D::operator[](int i)
     {
         if(i < 0 || i >= 3)

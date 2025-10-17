@@ -15,6 +15,8 @@ namespace math
         float magnitude() const;
         void normalize();                               // Normaliza o proprio vector        
         Vector3D normalized() const;                    // Retorna uma copia normalizada
+        
+        float dotProduct(const Vector3D &rhs) const;
 
         /*
         *================================================

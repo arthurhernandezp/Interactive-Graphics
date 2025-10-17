@@ -156,3 +156,23 @@ TEST(Vector3DTest,ScalarMultiplicationMagnitudeVector3D)
 
     EXPECT_EQ( magnitudeVec1 * 2, magnitudeVec2 );
 }
+
+TEST(Vector3DTest,DotProductVector3D)
+{
+    math::Vector3D a(-6.0f,8.0f,0.0f);
+    math::Vector3D b(5.0f,12.0f,0.0f);
+
+    float dotProductResult = a.dotProduct(b);
+
+    EXPECT_EQ(dotProductResult,66);
+}
+
+TEST(Vector3DTest,DotProductPerpendicularVector3D)
+{
+    math::Vector3D a(-12.0f,16.0f,0.0f);
+    math::Vector3D b(12.0f,9.0f,0.0f);
+
+    float dotProductResult = a.dotProduct(b);
+
+    EXPECT_EQ(dotProductResult,0);
+}
