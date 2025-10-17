@@ -23,7 +23,19 @@ namespace math
 
             Vector3D& operator[](int j);
             const Vector3D& operator[](int j) const;
-    };
-
+    };    
+    inline std::ostream& operator<<(std::ostream &os, const Matrix3D &m)
+    {
+        os << "Matrix3D(\n" << m(0,0) << ", " << m(0,1) << ", " << m(0,2) << '\n'
+                            << m(1,0) << ", " << m(1,1) << ", " << m(1,2) << '\n'
+                            << m(2,0) << ", " << m(2,1) << ", " << m(2,2) << "\n)";
+        return os;
+    }
+    /*
+    *================================================
+    *   OPERATOR OVERLOAD QUE MODIFICAM (&) A STRUCT 
+    *================================================
+    */    
+    Matrix3D operator+(const Matrix3D &lhs, Matrix3D &rhs);
 } // namespace math
 
