@@ -1,8 +1,8 @@
 set(TEST_NAME gtest_math_t)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/src/math/*cpp)
-
+# file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/src/math/*cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp ${CMAKE_SOURCE_DIR}/src/math/*cpp)
 enable_testing()
 
 add_executable(${TEST_NAME} ${SOURCES})
