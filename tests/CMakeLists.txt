@@ -1,3 +1,6 @@
 enable_testing()
-
+set(unittests_output ${CMAKE_BINARY_DIR}/bin/$<CONFIG>/tests/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${unittests_output})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${unittests_output})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${unittests_output})
 add_subdirectory(math_t)
