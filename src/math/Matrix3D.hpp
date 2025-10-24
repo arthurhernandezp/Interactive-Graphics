@@ -39,9 +39,11 @@ namespace math
     *   OPERATOR OVERLOAD QUE MODIFICAM (&) A STRUCT 
     *================================================
     */    
-    Matrix3D operator+(const Matrix3D &lhs, Matrix3D &rhs);
-    Matrix3D operator-(const Matrix3D &lhs, Matrix3D &rhs);
+    Matrix3D operator+(const Matrix3D &lhs, const Matrix3D &rhs);
+    Matrix3D operator-(const Matrix3D &lhs, const Matrix3D &rhs);
     Matrix3D operator*(const Matrix3D& m, float s);
     Matrix3D operator*(float s, const Matrix3D& m); 
+
+    Matrix3D operator*(const Matrix3D& A, const Matrix3D& B); 
 } // namespace math
 
