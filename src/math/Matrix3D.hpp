@@ -23,6 +23,9 @@ namespace math
 
             Vector3D& operator[](int j);
             const Vector3D& operator[](int j) const;
+
+            void operator +=(const Matrix3D &rhs);
+            void operator -=(const Matrix3D &rhs);
     };    
     inline std::ostream& operator<<(std::ostream &os, const Matrix3D &m)
     {
@@ -37,5 +40,8 @@ namespace math
     *================================================
     */    
     Matrix3D operator+(const Matrix3D &lhs, Matrix3D &rhs);
+    Matrix3D operator-(const Matrix3D &lhs, Matrix3D &rhs);
+    Matrix3D operator*(const Matrix3D& m, float s);
+    Matrix3D operator*(float s, const Matrix3D& m); 
 } // namespace math
 

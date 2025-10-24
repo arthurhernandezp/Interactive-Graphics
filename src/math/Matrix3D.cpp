@@ -36,11 +36,46 @@ namespace math
        return (*reinterpret_cast<const Vector3D *>(n[j]));
     }
 
+    void Matrix3D::operator+=(const Matrix3D &rhs)
+    {
+        (*this)(0,0) +=  rhs(0,0); (*this)(0,1) += rhs(0,1); (*this)(0,2) += rhs(0,2);
+        (*this)(1,0) +=  rhs(1,0); (*this)(1,1) += rhs(1,1); (*this)(1,2) += rhs(1,2);
+        (*this)(2,0) +=  rhs(2,0); (*this)(2,1) += rhs(2,1); (*this)(2,2) += rhs(2,2);
+    }
+
+    void Matrix3D::operator-=(const Matrix3D &rhs)
+    {
+        (*this)(0,0) -=  rhs(0,0); (*this)(0,1) -= rhs(0,1); (*this)(0,2) -= rhs(0,2);
+        (*this)(1,0) -=  rhs(1,0); (*this)(1,1) -= rhs(1,1); (*this)(1,2) -= rhs(1,2);
+        (*this)(2,0) -=  rhs(2,0); (*this)(2,1) -= rhs(2,1); (*this)(2,2) -= rhs(2,2);
+    }
+
     Matrix3D operator+(const Matrix3D &lhs, Matrix3D &rhs)
     {
         return Matrix3D(lhs(0,0) + rhs(0,0),lhs(1,0) + rhs(1,0),lhs(2,0) + rhs(2,0),
                         lhs(0,1) + rhs(0,1),lhs(1,1) + rhs(1,1),lhs(2,1) + rhs(2,1),
                         lhs(0,2) + rhs(0,2),lhs(1,2) + rhs(1,2),lhs(2,2) + rhs(2,2));
+    }
+
+    Matrix3D operator-(const Matrix3D &lhs, Matrix3D &rhs)
+    {
+        return Matrix3D(lhs(0,0) - rhs(0,0),lhs(1,0) - rhs(1,0),lhs(2,0) - rhs(2,0),
+                        lhs(0,1) - rhs(0,1),lhs(1,1) - rhs(1,1),lhs(2,1) - rhs(2,1),
+                        lhs(0,2) - rhs(0,2),lhs(1,2) - rhs(1,2),lhs(2,2) - rhs(2,2));
+    }
+
+    Matrix3D operator*(const Matrix3D &m, float s)
+    {
+        return Matrix3D(m(0,0) * s, m(1,0) * s, m(2,0) * s,
+                        m(0,1) * s, m(1,1) * s, m(2,1) * s,
+                        m(0,2) * s, m(1,2) * s, m(2,2) * s);
+    }
+
+    Matrix3D operator*(float s, const Matrix3D &m)
+    {
+        return Matrix3D(m(0,0) * s, m(1,0) * s, m(2,0) * s,
+                        m(0,1) * s, m(1,1) * s, m(2,1) * s,
+                        m(0,2) * s, m(1,2) * s, m(2,2) * s);
     }
 
 } // namespace math

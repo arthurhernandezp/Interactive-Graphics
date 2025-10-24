@@ -102,7 +102,7 @@ TEST(Vector3DTest,DivideVector3D)
     EXPECT_EQ(vec2.z, 3.0f);
 }
 
-TEST(Vector3DTest,DivideByZeroVector3D)
+TEST(Vector3DTest,DivideByZeroExceptionVector3D)
 {
     math::Vector3D vec1(2.0f,4.0f,6.0f);
 

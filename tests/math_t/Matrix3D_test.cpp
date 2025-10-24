@@ -52,3 +52,81 @@ TEST(Matrix3DTest, SumMatrix3D)
     EXPECT_EQ(m3(2,0),6.0f);  EXPECT_EQ(m3(2,1),12.0f);  EXPECT_EQ(m3(2,2),18.0f);
 
 }
+
+TEST(Matrix3DTest, SubMatrix3D)
+{
+    math::Vector3D a(1.0f,2.0f,3.0f);
+    math::Vector3D b(4.0f,5.0f,6.0f);
+    math::Vector3D c(7.0f,8.0f,9.0f);
+
+    math::Matrix3D m1(a,b,c);
+    math::Matrix3D m2(a,b,c);
+
+    math::Matrix3D m3 = m1 - m2;
+
+    EXPECT_EQ(m3(0,0),0.0f);  EXPECT_EQ(m3(0,1),0.0f);   EXPECT_EQ(m3(0,2),0.0f);
+    EXPECT_EQ(m3(1,0),0.0f);  EXPECT_EQ(m3(1,1),0.0f);  EXPECT_EQ(m3(1,2),0.0f);
+    EXPECT_EQ(m3(2,0),0.0f);  EXPECT_EQ(m3(2,1),0.0f);  EXPECT_EQ(m3(2,2),0.0f);
+}
+
+TEST(Matrix3DTest, Multiplica_Matrix3DXScalar)
+{
+    math::Vector3D a(1.0f,2.0f,3.0f);
+    math::Vector3D b(4.0f,5.0f,6.0f);
+    math::Vector3D c(7.0f,8.0f,9.0f);
+
+    math::Matrix3D m1(a,b,c);
+
+    math::Matrix3D m3 = m1 * 2;
+
+    EXPECT_EQ(m3(0,0),2.0f);  EXPECT_EQ(m3(0,1),8.0f);   EXPECT_EQ(m3(0,2),14.0f);
+    EXPECT_EQ(m3(1,0),4.0f);  EXPECT_EQ(m3(1,1),10.0f);  EXPECT_EQ(m3(1,2),16.0f);
+    EXPECT_EQ(m3(2,0),6.0f);  EXPECT_EQ(m3(2,1),12.0f);  EXPECT_EQ(m3(2,2),18.0f);
+}
+
+TEST(Matrix3DTest, Multiplica_ScalarXMatrix3D)
+{
+    math::Vector3D a(1.0f,2.0f,3.0f);
+    math::Vector3D b(4.0f,5.0f,6.0f);
+    math::Vector3D c(7.0f,8.0f,9.0f);
+
+    math::Matrix3D m1(a,b,c);
+
+    math::Matrix3D m3 = 2 * m1;
+
+    EXPECT_EQ(m3(0,0),2.0f);  EXPECT_EQ(m3(0,1),8.0f);   EXPECT_EQ(m3(0,2),14.0f);
+    EXPECT_EQ(m3(1,0),4.0f);  EXPECT_EQ(m3(1,1),10.0f);  EXPECT_EQ(m3(1,2),16.0f);
+    EXPECT_EQ(m3(2,0),6.0f);  EXPECT_EQ(m3(2,1),12.0f);  EXPECT_EQ(m3(2,2),18.0f);
+}
+
+TEST(Matrix3DTest, PlusEqualMatrix3D)
+{
+    math::Vector3D a(1.0f,2.0f,3.0f);
+    math::Vector3D b(4.0f,5.0f,6.0f);
+    math::Vector3D c(7.0f,8.0f,9.0f);
+
+    math::Matrix3D m1(a,b,c);
+    math::Matrix3D m2(a,b,c);
+
+    m1 += m2;
+
+    EXPECT_EQ(m1(0,0),2.0f);  EXPECT_EQ(m1(0,1),8.0f);   EXPECT_EQ(m1(0,2),14.0f);
+    EXPECT_EQ(m1(1,0),4.0f);  EXPECT_EQ(m1(1,1),10.0f);  EXPECT_EQ(m1(1,2),16.0f);
+    EXPECT_EQ(m1(2,0),6.0f);  EXPECT_EQ(m1(2,1),12.0f);  EXPECT_EQ(m1(2,2),18.0f);
+}
+
+TEST(Matrix3DTest, SubEqualMatrix3D)
+{
+    math::Vector3D a(1.0f,2.0f,3.0f);
+    math::Vector3D b(4.0f,5.0f,6.0f);
+    math::Vector3D c(7.0f,8.0f,9.0f);
+
+    math::Matrix3D m1(a,b,c);
+    math::Matrix3D m2(a,b,c);
+
+    m1 -= m2;
+
+    EXPECT_EQ(m1(0,0),0.0f);  EXPECT_EQ(m1(0,1),0.0f);  EXPECT_EQ(m1(0,2),0.0f);
+    EXPECT_EQ(m1(1,0),0.0f);  EXPECT_EQ(m1(1,1),0.0f);  EXPECT_EQ(m1(1,2),0.0f);
+    EXPECT_EQ(m1(2,0),0.0f);  EXPECT_EQ(m1(2,1),0.0f);  EXPECT_EQ(m1(2,2),0.0f);
+}
