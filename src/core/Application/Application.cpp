@@ -3,6 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>     //glm::mat4 identity = glm::mat4(1.0f);
 #include <glm/gtc/type_ptr.hpp>             //glm::value_ptr
 
+#include "graphics/renderer/OpenGLContext.hpp"
+
 #include "graphics/renderer/ShaderProgram.hpp"
 
 #include "graphics/mesh/Mesh.hpp"
@@ -20,11 +22,8 @@ namespace core
     int Application::run()
     {
         std::cout << "glfw version: " << glfwGetVersionString() << '\n';
-        // glfw: initialize and configure
-        glfwInit();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        graphics::renderer::OpenGLContext OpenGLContext(3,3,GLFW_OPENGL_CORE_PROFILE);
 
         if (!_window.create())
         {
