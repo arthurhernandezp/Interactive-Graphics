@@ -41,10 +41,13 @@ namespace core
         float lastFrameStartTime = 0.0f;
 
         glm::mat4 objPos = glm::mat4(1.0f);
-        // objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, -10.0));
-        objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
         objPos = glm::scale(objPos, glm::vec3(0.5, 0.5, 0.5));
-        meshProgram.sendUniform("objPos",objPos);
+
+        objPos = glm::rotate(objPos, glm::radians(-90.0f),glm::vec3(1.0, 0.0, 0.0));
+
+        // objPos = glm::translate(objPos,glm::vec3(0.0, 0.0, -10.0));
+
+        // meshProgram.sendUniform("objPos",objPos);
 
         auto windowDimensions = _window.getWindowDimensions();
         _camera = std::make_shared<Camera>(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
@@ -64,17 +67,23 @@ namespace core
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             meshProgram.use();
-
+            model = objPos;
             _camera->Matrix(45.0f,0.1f,100.0f,view,projection);
             //@todo melhorar esse envio de uniform para o shader e encapsular a rotação da iluminação
-            auto camMatrix = projection * view * model;
+            // auto camMatrix = projection * view * model;
+            auto mvp = projection * view * model;
+
             meshProgram.use();
-            meshProgram.sendUniform("camMatrix",camMatrix);
+            // meshProgram.sendUniform("camMatrix",camMatrix);
+            meshProgram.sendUniform("mvp",mvp);
             auto modelView = view * model;
 
-            meshProgram.sendUniform("modelView", modelView);
-
+            meshProgram.sendUniform("modelViewFrag", modelView);
             glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
+
+            model = glm::mat4(1.0f);
+            modelView = view * model;
+            meshProgram.sendUniform("modelViewLight", modelView);
 
             meshProgram.sendUniform("normalMatrix", normalMatrix);
 
@@ -88,7 +97,7 @@ namespace core
             meshProgram.sendUniform("uSpecularStrength",light.specularStrength);
             meshProgram.sendUniform("uLightColor",light.lightColor);
 
-            meshProgram.sendUniform("objPos",objPos);
+            // meshProgram.sendUniform("objPos",objPos);
             glPointSize(1.5f);
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
             {
@@ -106,9 +115,10 @@ namespace core
             mesh.draw();
             lightProgram.use();
             lightPosition *= lightRotation;
-            lightProgram.sendUniform("camMatrix",camMatrix);
+            mvp = projection * view * lightPosition;
+            lightProgram.sendUniform("mvp",mvp);
             lightProgram.sendUniform("uLightColor",light.lightColor);
-            lightProgram.sendUniform("ulightPos",lightPosition);
+            // lightProgram.sendUniform("ulightPos",lightPosition);
             light.draw();
 
             _window.swapBuffers();

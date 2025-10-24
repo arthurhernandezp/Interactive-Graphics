@@ -7,18 +7,19 @@ out vec3 FragPos;
 out vec3 Normal;
 out vec3 lightPos;
 
-uniform mat4 camMatrix;
-uniform mat4 objPos;
+uniform mat4 mvp;
+
 uniform vec3 ulightPos;
 
-uniform mat4 modelView;
+uniform mat4 modelViewFrag;
+uniform mat4 modelViewLight;
 uniform mat3 normalMatrix;
 
 void main()
 {
-    FragPos = vec3(modelView * objPos * vec4(pos, 1.0));
-    Normal = normalMatrix * mat3(objPos) * aNormal;
-    lightPos = vec3(modelView * vec4(ulightPos, 1.0));
-    gl_Position = camMatrix * objPos * vec4(pos, 1);
+    FragPos = vec3(modelViewFrag * vec4(pos, 1.0));
+    Normal = normalMatrix * aNormal;
+    lightPos = vec3(modelViewLight * vec4(ulightPos, 1.0));
+    gl_Position = mvp * vec4(pos, 1);
     objectColor = vec3(0.0f,0.0f,1.0f);
 }
