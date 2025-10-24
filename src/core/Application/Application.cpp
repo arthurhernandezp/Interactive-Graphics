@@ -9,7 +9,6 @@
 
 #include "graphics/mesh/Mesh.hpp"
 #include "graphics/lighting/Light.hpp"
-#include "core/Camera.hpp"
 
 #include <memory>       // unique_ptr
 #include <iostream>
@@ -48,7 +47,7 @@ namespace core
         meshProgram.sendUniform("objPos",objPos);
 
         auto windowDimensions = _window.getWindowDimensions();
-        Camera camera(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
+        _camera = std::make_shared<Camera>(windowDimensions.first,windowDimensions.second,glm::vec3(0.0f,0.0f,2.0f));
 
         glEnable(GL_DEPTH_TEST);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -66,7 +65,7 @@ namespace core
 
             meshProgram.use();
 
-            camera.Matrix(45.0f,0.1f,100.0f,view,projection);
+            _camera->Matrix(45.0f,0.1f,100.0f,view,projection);
             //@todo melhorar esse envio de uniform para o shader e encapsular a rotação da iluminação
             auto camMatrix = projection * view * model;
             meshProgram.use();
@@ -115,7 +114,7 @@ namespace core
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
-            camera.Inputs(_window.getGLFWwindow(),deltaTime);
+            _camera->Inputs(_window.getGLFWwindow(),deltaTime);
             meshProgram.recompileShaders(_window.getGLFWwindow());
         }
 
