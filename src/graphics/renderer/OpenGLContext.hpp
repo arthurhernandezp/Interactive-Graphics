@@ -10,6 +10,7 @@ namespace graphics
         {
             public:
                 OpenGLContext(int openglVersionMajor, int openglVersionMinor, int openglProfile);
+                ~OpenGLContext();
 
                 void init();
             private:

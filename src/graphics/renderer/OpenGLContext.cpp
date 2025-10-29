@@ -10,6 +10,10 @@ namespace graphics
             init();
         }
 
+        OpenGLContext::~OpenGLContext()
+        {
+        }
+
         void OpenGLContext::init() 
         {
             glfwInit();
