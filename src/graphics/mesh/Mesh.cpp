@@ -47,32 +47,45 @@ namespace graphics
 
         void Mesh::draw() const
         {
-            auto drawMesh   = [&] { glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0); };
-            auto drawVertex = [&] { glDrawArrays(GL_POINTS, 0,_vertices.size());  };
-
             _vao->bindBuffer();
-            (_renderMode == MeshRenderMode::FULLMESH) ?  drawMesh() : drawVertex();
+            glDrawElements(_renderMode, _indices.size(), GL_UNSIGNED_INT, 0);
             _vao->unbindBuffer();
         }
 
         void Mesh::swapRenderMode()
         {
-            (_renderMode == MeshRenderMode::FULLMESH) ?
-            _renderMode = MeshRenderMode::VERTICES_ONLY :
-            _renderMode = MeshRenderMode::FULLMESH;
+            static int swapCounter = 0;
+
+            switch (swapCounter)
+            {
+                case 0:
+                    _renderMode = GL_LINES;
+                    break;
+                case 1:
+                    _renderMode = GL_POINTS;
+                    break;
+                case 2:
+                    _renderMode = GL_TRIANGLES;
+                    break;
+            }
+            swapCounter++;
+            if(swapCounter >= 3)
+            {
+                swapCounter = 0;
+            }
         }
 
         void Mesh::loadObj()
         {
             std::ifstream file(_objFilePath);
-            if (!file.is_open()) 
+            if (!file.is_open())
             {
                 std::cout << "Nao foi possivel abrir o arquivo : " << _objFilePath << std::endl;
                 return;
             }
 
             _vertices.clear();
-            _indices.clear(); 
+            _indices.clear();
             _normal.clear();
 
             std::string line;
@@ -104,7 +117,7 @@ namespace graphics
                     std::vector<int> faceIndices;
                     std::string vertexData;
                     while (iss >> vertexData) {
-                        
+
                         size_t slashPos = vertexData.find('/');
                         std::string vertexIndexStr = vertexData.substr(0, slashPos);
                         try {
@@ -116,9 +129,9 @@ namespace graphics
                     }
 
                     // Triangulação
-                    if (faceIndices.size() >= 3) 
+                    if (faceIndices.size() >= 3)
                     {
-                        for (size_t i = 1; i + 1 < faceIndices.size(); ++i) 
+                        for (size_t i = 1; i + 1 < faceIndices.size(); ++i)
                         {
                             _indices.push_back(faceIndices[0]);
                             _indices.push_back(faceIndices[i]);
@@ -134,4 +147,3 @@ namespace graphics
         }
     } // namespace mesh
 } // namespace graphics
-

@@ -11,34 +11,69 @@ namespace graphics
 
         void Scene::load()
         {
-            std::shared_ptr<graphics::mesh::Mesh> mesh;
-            std::shared_ptr<graphics::scene::SceneObject> bule;
+            loadMeshes();
+            loadObjects();
+        }
+
+        void Scene::swapVisualizationMode()
+        {
+            for(auto & mesh : _meshes)
+            {
+                mesh->swapRenderMode();
+            }
+        }
+
+        void Scene::update(float deltaTime)
+        {
+            // Animação de rotação da luz
+            auto & light = _lights.at(0);
+            light->transform.setRotationAngleDeegres(deltaTime* 60.0f);
+            light->lightSource = light->transform.getModelMatrix() * glm::vec4(light->lightSource, 1.0f);
+        }
+
+        const std::vector<std::shared_ptr<scene::SceneObject>> &Scene::getSceneObjects()
+        {
+            return _objects;
+        }
+
+        const std::vector<std::shared_ptr<lighting::Light>> &Scene::getLights() const
+        {
+            return _lights;
+        }
+
+        void Scene::loadMeshes()
+        {
+            std::shared_ptr<graphics::mesh::Mesh>
             mesh = std::make_shared<graphics::mesh::Mesh>("resources/teapot.obj");
+            _meshes.push_back(mesh);
+        }
+
+        void Scene::loadObjects()
+        {
+            std::shared_ptr<graphics::scene::SceneObject> bule;
 
             bule = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,0.0f,0.0f});
-            bule->setMesh(mesh);
+            bule->setMesh(_meshes.at(0));
             bule->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule->transform.setRotationAngleDeegres(-90.0f);
             bule->transform.setPosition(glm::vec3(0.0, 0.0, -10.0));
             _objects.emplace_back(bule);
 
-
             std::shared_ptr<graphics::scene::SceneObject> bule2;
 
             bule2 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,1.0f,0.0f});
-            bule2->setMesh(mesh);
+            bule2->setMesh(_meshes.at(0));
             bule2->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule2->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule2->transform.setRotationAngleDeegres(-90.0f);
             bule2->transform.setPosition(glm::vec3(0.0, 0.0, 10.0));
             _objects.emplace_back(bule2);
 
-
             std::shared_ptr<graphics::scene::SceneObject> bule3;
 
             bule3 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,0.0f,1.0f});
-            bule3->setMesh(mesh);
+            bule3->setMesh(_meshes.at(0));
             bule3->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule3->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule3->transform.setRotationAngleDeegres(-90.0f);
@@ -48,7 +83,7 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule4;
 
             bule4 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,0.0f,1.0f});
-            bule4->setMesh(mesh);
+            bule4->setMesh(_meshes.at(0));
             bule4->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule4->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule4->transform.setRotationAngleDeegres(-90.0f);
@@ -58,7 +93,7 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule5;
 
             bule5 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,1.0f,0.0f});
-            bule5->setMesh(mesh);
+            bule5->setMesh(_meshes.at(0));
             bule5->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule5->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule5->transform.setRotationAngleDeegres(-90.0f);
@@ -68,7 +103,7 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule6;
 
             bule6 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,1.0f,1.0f});
-            bule6->setMesh(mesh);
+            bule6->setMesh(_meshes.at(0));
             bule6->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule6->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule6->transform.setRotationAngleDeegres(-90.0f);
@@ -81,31 +116,6 @@ namespace graphics
             lightCube->transform.setRotationAngleDeegres(60.0f);
 
             _lights.emplace_back(lightCube);
-        }
-
-        void Scene::swapVisualizationMode()
-        {
-            for(auto & sceneObject : _objects)
-                sceneObject->getMesh()->swapRenderMode();
-        }
-
-        void Scene::update(float deltaTime)
-        {
-            // Animação de rotação da luz
-            auto & light = _lights.at(0);
-            light->transform.setRotationAngleDeegres(deltaTime* 60.0f);
-            light->lightSource = light->transform.getModelMatrix() * glm::vec4(light->lightSource, 1.0f);
-
-        }
-
-        const std::vector<std::shared_ptr<scene::SceneObject>> &Scene::getSceneObjects()
-        {
-            return _objects;
-        }
-
-        const std::vector<std::shared_ptr<lighting::Light>> &Scene::getLights() const
-        {
-            return _lights;
         }
 
     } // namespace scene

@@ -21,10 +21,13 @@ namespace graphics
                 const std::vector<std::shared_ptr<scene::SceneObject>>& getSceneObjects();
                 const std::vector<std::shared_ptr<lighting::Light>>& getLights() const;
             private:
+                void loadMeshes();
+                void loadObjects();
+            private:
                 std::vector<std::shared_ptr<scene::SceneObject>> _objects;
                 std::vector<std::shared_ptr<lighting::Light>> _lights;
+                std::vector<std::shared_ptr<graphics::mesh::Mesh>> _meshes;
         };
     } // namespace scene
-    
-} // namespace graphics
 
+} // namespace graphics

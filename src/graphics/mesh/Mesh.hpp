@@ -20,15 +20,18 @@ namespace graphics
                 ~Mesh();
                 void swapRenderMode();
                 void draw() const;
+                enum
+                {
+                    VERTICES_ONLY = GL_POINTS,
+                    LINES = GL_LINES,
+                    FULLMESH = GL_TRIANGLES
+                };
+
+                int _renderMode = FULLMESH;
+
             private:
                 void loadObj();
             private:
-                enum class MeshRenderMode
-                {
-                    VERTICES_ONLY,
-                    FULLMESH
-                };
-                MeshRenderMode _renderMode = MeshRenderMode::FULLMESH;
 
                 std::string _objFilePath;
 
