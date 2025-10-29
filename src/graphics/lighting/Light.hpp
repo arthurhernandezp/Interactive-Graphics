@@ -5,6 +5,7 @@
 #include "graphics/renderer/VertexBuffer.hpp"
 #include "graphics/renderer/VertexArray.hpp"
 #include "graphics/renderer/ElementBuffer.hpp"
+#include "core/Transform.hpp"
 
 #include <glm/glm.hpp>
 
@@ -25,6 +26,8 @@ namespace graphics
                 float ambientIntensity = 0.1;
                 float specularStrength = 0.9;
 
+                Transform transform;
+                glm::mat4 lightPosition = glm::mat4(1.0f);
             private:
                 void createCubeLight();
                 void createCubeIndices();

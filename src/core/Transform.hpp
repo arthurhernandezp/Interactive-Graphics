@@ -17,6 +17,7 @@ class Transform
         void setRotationAngleDeegres(float angle);
 
         glm::mat4 getModelMatrix() const;
+       float getRotationAngle();
     public:
 
     private:

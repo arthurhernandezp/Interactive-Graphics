@@ -40,3 +40,8 @@ glm::mat4 Transform::getModelMatrix() const
 
     return model;
 }
+
+float Transform::getRotationAngle()
+{
+    return _rotationAngleDegrees;
+}

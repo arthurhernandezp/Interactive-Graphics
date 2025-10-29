@@ -32,22 +32,10 @@ namespace core
             return -1;
         }
 
-        // Carrega os shaders a partir de um arquivo externo, compila e linka com o programa
-        graphics::renderer::ShaderProgram meshProgram("shaders/shader.vert","shaders/shader.frag");
-        std::shared_ptr<graphics::mesh::Mesh> mesh;
-        mesh = std::make_shared<graphics::mesh::Mesh>("resources/teapot.obj");
-
-        graphics::renderer::ShaderProgram lightProgram("shaders/light.vert","shaders/light.frag");
-        [[maybe_unused]] graphics::lighting::Light light;
-        glm::mat4 lightPosition = glm::mat4(1.0f);
-
-        graphics::scene::SceneObject bule;
-        bule.setMesh(mesh);
-        bule.transform.setScale(glm::vec3(0.5, 0.5, 0.5));
-        bule.transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
-        bule.transform.setRotationAngleDeegres(-90.0f);
-        bule.transform.setPosition(glm::vec3(0.0, 0.0, -10.0));
+        _render.init();
         
+        _scene.load();
+
         float lastFrameStartTime = 0.0f;
 
         auto windowDimensions = _window.getWindowDimensions();
@@ -59,45 +47,14 @@ namespace core
         while (!_window.shouldClose())
         {
             [[maybe_unused]] auto deltaTime = calculateDeltaTime(lastFrameStartTime);
+            _render.clear();
+            _scene.update(deltaTime);
 
-            glm::mat4 model(1.0f);
-            glm::mat4 view(1.0f);
-            glm::mat4 projection(1.0f);
-
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            model = bule.transform.getModelMatrix();
-
-            _camera->Matrix(45.0f,0.1f,100.0f,view,projection);
-
-            //@todo melhorar esse envio de uniform para o shader e encapsular a rotação da iluminação
-            
-            meshProgram.use();
-            auto mvp = projection * view * model;
-            meshProgram.sendUniform("mvp",mvp);
-
-            auto modelView = view * model;
-            meshProgram.sendUniform("modelViewFrag", modelView);
-
-            glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
-            meshProgram.sendUniform("normalMatrix", normalMatrix);
-
-            model = glm::mat4(1.0f);
-            modelView = view * model;
-            meshProgram.sendUniform("modelViewLight", modelView);
-            meshProgram.sendUniform("ulightPos", light.lightSource);
-            meshProgram.sendUniform("uLightIntensity",light.intensity);
-            meshProgram.sendUniform("uAmbientStrength",light.ambientIntensity);
-            meshProgram.sendUniform("uSpecularStrength",light.specularStrength);
-            meshProgram.sendUniform("uLightColor",light.lightColor);
-
-            glPointSize(1.5f);
             if (glfwGetKey(_window.getGLFWwindow(), GLFW_KEY_M) == GLFW_PRESS)
             {
                 if (first_m_ButtonClick)
                 {
-                    bule.getMesh()->swapRenderMode();
+                    _scene.swapVisualizationMode();
                     first_m_ButtonClick = false;
                 }
             }
@@ -106,26 +63,14 @@ namespace core
                 first_m_ButtonClick = true;
             }
 
-            bule.getMesh()->draw();
-
-            lightProgram.use();
-            
-            glm::mat4 lightRotation = glm::rotate(glm::mat4(1.0f), glm::radians(deltaTime * 60.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f)));
-
-            light.lightSource = lightRotation * glm::vec4(light.lightSource, 1.0f);
-
-            lightPosition *= lightRotation;
-            mvp = projection * view * lightPosition;
-            lightProgram.sendUniform("mvp",mvp);
-            lightProgram.sendUniform("uLightColor",light.lightColor);
-
-            light.draw();
+            _render.update(_scene,_camera);
 
             _window.swapBuffers();
             _window.pollEvents();
             _window.processInput();
             _camera->Inputs(_window.getGLFWwindow(),deltaTime);
-            meshProgram.recompileShaders(_window.getGLFWwindow());
+
+            recompileShaders();
         }
 
         glfwTerminate();
@@ -138,5 +83,14 @@ namespace core
         float deltaTime = currentFrameStartTime - lastFrameStartTime;
         lastFrameStartTime = currentFrameStartTime;
         return deltaTime;
+    }
+
+    void Application::recompileShaders() const
+    {
+        auto shaders = _render.getShaders();
+        for(auto & shader : shaders)
+        {
+            shader->recompileShaders(_window.getGLFWwindow());
+        }
     }
 } // namespace core
