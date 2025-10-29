@@ -56,12 +56,12 @@ namespace graphics
             _meshProgram->sendUniform("uSpecularStrength", light->specularStrength);
             _meshProgram->sendUniform("uLightColor", light->lightColor);
 
-            // Enviar o 'modelViewLight' 
+            // Enviar o 'modelViewLight'
             glm::mat4 modelViewLight = view * glm::mat4(1.0f); // view * identidade = view
             _meshProgram->sendUniform("modelViewLight", modelViewLight);
-        
+
             for (const auto& sceneObject : scene.getSceneObjects())
-            {    
+            {
                 glm::mat4 model =  sceneObject->transform.getModelMatrix();
 
                 glm::mat4 mvp = projection * view * model;
@@ -73,13 +73,15 @@ namespace graphics
                 glm::mat3 normalMatrix = glm::inverse((glm::transpose(view * model)));
                 _meshProgram->sendUniform("normalMatrix", normalMatrix);
 
+                _meshProgram->sendUniform("uObjectColor", sceneObject->objectColor);
+
                 sceneObject->getMesh()->draw();
             }
 
             // Light Cube
 
             _lightProgram->use();
-            
+
             glm::mat4 model =  light->transform.getModelMatrix();
             light->lightPosition *= model;
             glm::mat4 mvp = projection * view * light->lightPosition;

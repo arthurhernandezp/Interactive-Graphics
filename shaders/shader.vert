@@ -2,7 +2,6 @@
 layout(location = 0) in vec3 pos;
 layout(location = 1) in vec3 aNormal;
 
-out vec3 objectColor;
 out vec3 FragPos;
 out vec3 Normal;
 out vec3 lightPos;
@@ -21,5 +20,4 @@ void main()
     Normal = normalMatrix * aNormal;
     lightPos = vec3(modelViewLight * vec4(ulightPos, 1.0));
     gl_Position = mvp * vec4(pos, 1);
-    objectColor = vec3(0.0f,0.0f,1.0f);
 }

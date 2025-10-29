@@ -1,7 +1,6 @@
 #version 330 core
 layout(location=0) out vec4 color;
 
-in vec3 objectColor;
 in vec3 Normal;
 in vec3 FragPos;
 in vec3 lightPos;
@@ -11,6 +10,7 @@ uniform float uAmbientStrength;
 uniform float uSpecularStrength;
 
 uniform vec3 uLightColor;
+uniform vec3 uObjectColor;
 
 void main()
 {
@@ -31,6 +31,6 @@ void main()
     float spec = pow(max(dot(norm, H), 0.0), 64);
     vec3 specular = uSpecularStrength * spec * uLightColor;
 
-    vec3 result = uLightIntensity * ( (ambient + diffuse + specular) * objectColor );
+    vec3 result = uLightIntensity * ( (ambient + diffuse + specular) * uObjectColor );
     color = vec4(result, 1.0);
 }

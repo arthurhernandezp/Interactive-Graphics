@@ -33,7 +33,7 @@ namespace core
         }
 
         _render.init();
-        
+
         _scene.load();
 
         float lastFrameStartTime = 0.0f;

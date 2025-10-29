@@ -4,6 +4,10 @@ namespace graphics
 {
     namespace scene
     {
+        SceneObject::SceneObject(glm::vec3 objColor) : objectColor{objColor}
+        {
+        }
+
         std::shared_ptr<graphics::mesh::Mesh> SceneObject::getMesh() const
         {
             return _mesh;
