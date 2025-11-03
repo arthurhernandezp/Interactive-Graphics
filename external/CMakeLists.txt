@@ -2,6 +2,7 @@ set(GLAD_ROOT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/glad      CACHE STRING "glad 
 set(GLFW_ROOT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/glfw      CACHE STRING "GLFW root directory")
 set(GLM_ROOT_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/glm        CACHE STRING "GLM root directory")
 set(GOOGLETEST_ROOT_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/googletest   CACHE STRING "GoogleTest root directory")
+set(STB_IMAGE_ROOT_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/stbimage   CACHE STRING "Stbimage root directory")
 
 # All
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Building dependencies as static libraries" FORCE)
@@ -17,3 +18,4 @@ add_subdirectory(${GLAD_ROOT_DIR})
 add_subdirectory(${GLFW_ROOT_DIR})
 add_subdirectory(${GLM_ROOT_DIR})
 add_subdirectory(${GOOGLETEST_ROOT_DIR})
+add_subdirectory(${STB_IMAGE_ROOT_DIR})
