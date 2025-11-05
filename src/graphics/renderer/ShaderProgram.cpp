@@ -96,6 +96,16 @@ namespace graphics
             }
         }
 
+        void ShaderProgram::sendUniform(const char *uniformVariable, int value)
+        {
+            GLint uniformVarLoc = getUniformVarPosition(uniformVariable);
+            if (uniformVarLoc != -1){
+                glUniform1i(uniformVarLoc,value);
+            } else{
+                std::cerr << "Uniform " << uniformVariable << " nao encontrado na pos: " << uniformVarLoc << std::endl;
+            }
+        }
+
         void ShaderProgram::recompileShaders(GLFWwindow *window)
         {
             if (glfwGetKey(window, GLFW_KEY_F6) == GLFW_PRESS)
