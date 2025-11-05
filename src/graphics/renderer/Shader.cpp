@@ -12,10 +12,8 @@ namespace graphics
         {
             std::cout << "Shader Type: " << _shaderType << ", constructor called: " << shaderFilePath << std::endl;
             auto result = loadFromFile();
-            if(!result)
-            {
-                throw std::runtime_error(std::string("Nao foi possivel abrir o arquivo"));
-            }
+            if(result && result.value().empty())
+                throw std::runtime_error("Shader file carregado vazio: " + std::string(shaderFilePath));
 
             _shaderSource = result.value();
             const char * src = _shaderSource.c_str();
@@ -23,8 +21,8 @@ namespace graphics
             glShaderSource(_shader,1,&src,NULL);
             if(!compileShader())
             {
-                throw std::runtime_error(std::string("Error ao compilador o shader do tipo " +
-                                        shaderType + std::string(": \n") + _infoLog));
+                std::string typeStr = (_shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT");
+                throw std::runtime_error("Shader compilation failed (" + typeStr + "):\n" + std::string(_infoLog));
             }
         }
 
