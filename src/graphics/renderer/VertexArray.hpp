@@ -12,12 +12,12 @@ namespace graphics
                 VertexArrayObject();
                 ~VertexArrayObject();
                 // Links a VBO to the VAO using a certain layout
-                void LinkVBO(VertexBufferObject& VBO);
+                void LinkVBO(VertexBufferObject& VBO, int dataCount = 3);
                 void bindBuffer();
                 void unbindBuffer();
                 GLuint getVAOId();
             private:
-
+            
             private:
                 // ID reference for the Vertex Array Object
                 GLuint _ID;
