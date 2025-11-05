@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 #include <iostream>
-
+#include "graphics/mesh/MeshLoader.hpp"
 namespace graphics
 {
     namespace scene
@@ -12,6 +12,7 @@ namespace graphics
         void Scene::load()
         {
             loadMeshes();
+            loadMaterials();
             loadObjects();
         }
 
@@ -19,7 +20,7 @@ namespace graphics
         {
             for(auto & mesh : _meshes)
             {
-                mesh->swapRenderMode();
+                mesh.second->swapRenderMode();
             }
         }
 
@@ -43,9 +44,14 @@ namespace graphics
 
         void Scene::loadMeshes()
         {
-            std::shared_ptr<graphics::mesh::Mesh>
-            mesh = std::make_shared<graphics::mesh::Mesh>("resources/teapot.obj");
-            _meshes.push_back(mesh);
+            std::shared_ptr<graphics::mesh::Mesh> mesh = graphics::mesh::MeshLoader::loadObj("resources/teapot.obj"); 
+            _meshes.emplace("bule",std::move(mesh));
+        }
+
+        void Scene::loadMaterials()
+        {
+            _materials.emplace("brick",std::make_shared<graphics::material::Material>("resources/brick.png"));
+            _materials.emplace("brick-especular",std::make_shared<graphics::material::Material>("resources/brick-specular.png"));
         }
 
         void Scene::loadObjects()
@@ -53,7 +59,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule;
 
             bule = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,0.0f,0.0f});
-            bule->setMesh(_meshes.at(0));
+            bule->setMesh(_meshes["bule"]);
+            bule->setMaterial(_materials["brick"]);
             bule->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule->transform.setRotationAngleDeegres(-90.0f);
@@ -63,7 +70,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule2;
 
             bule2 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,1.0f,0.0f});
-            bule2->setMesh(_meshes.at(0));
+            bule2->setMesh(_meshes["bule"]);
+            bule2->setMaterial(_materials["brick"]);
             bule2->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule2->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule2->transform.setRotationAngleDeegres(-90.0f);
@@ -73,7 +81,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule3;
 
             bule3 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,0.0f,1.0f});
-            bule3->setMesh(_meshes.at(0));
+            bule3->setMesh(_meshes["bule"]);
+            bule3->setMaterial(_materials["brick"]);
             bule3->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule3->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule3->transform.setRotationAngleDeegres(-90.0f);
@@ -83,7 +92,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule4;
 
             bule4 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,0.0f,1.0f});
-            bule4->setMesh(_meshes.at(0));
+            bule4->setMesh(_meshes["bule"]);
+            bule4->setMaterial(_materials["brick"]);
             bule4->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule4->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule4->transform.setRotationAngleDeegres(-90.0f);
@@ -93,7 +103,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule5;
 
             bule5 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{1.0f,1.0f,0.0f});
-            bule5->setMesh(_meshes.at(0));
+            bule5->setMesh(_meshes["bule"]);
+            bule5->setMaterial(_materials["brick"]);
             bule5->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule5->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule5->transform.setRotationAngleDeegres(-90.0f);
@@ -103,7 +114,8 @@ namespace graphics
             std::shared_ptr<graphics::scene::SceneObject> bule6;
 
             bule6 = std::make_shared<graphics::scene::SceneObject>(glm::vec3{0.0f,1.0f,1.0f});
-            bule6->setMesh(_meshes.at(0));
+            bule6->setMesh(_meshes["bule"]);
+            bule6->setMaterial(_materials["brick"]);
             bule6->transform.setScale(glm::vec3(0.5, 0.5, 0.5));
             bule6->transform.setRotation(glm::vec3(1.0, 0.0, 0.0));
             bule6->transform.setRotationAngleDeegres(-90.0f);
@@ -117,7 +129,6 @@ namespace graphics
 
             _lights.emplace_back(lightCube);
         }
-
     } // namespace scene
 
 } // namespace graphcis

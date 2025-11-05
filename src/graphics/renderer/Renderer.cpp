@@ -7,6 +7,7 @@
 #include "graphics/scene/SceneObject.hpp"
 #include "graphics/lighting/Light.hpp"
 #include "graphics/mesh/Mesh.hpp"
+#include "graphics/Material/Material.hpp"
 
 #include "core/Camera.hpp"
 
@@ -75,6 +76,9 @@ namespace graphics
 
                 _meshProgram->sendUniform("uObjectColor", sceneObject->objectColor);
 
+                auto meshMaterial = sceneObject->getMaterial();
+                meshMaterial->applyTo(_meshProgram); 
+                    
                 sceneObject->getMesh()->draw();
             }
 
